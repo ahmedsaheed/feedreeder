@@ -10,6 +10,8 @@ android {
     namespace = "com.griffith.feedreeder_3061874"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
+
+
     defaultConfig {
         applicationId = "com.griffith.feedreeder_3061874"
         minSdk = libs.versions.minSdk.get().toInt()
@@ -37,7 +39,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
+
+        freeCompilerArgs += listOf(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+        )
+
     }
     buildFeatures {
         compose = true
@@ -46,9 +54,30 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
+    packagingOptions {
+        exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/LICENSE")
+        exclude("META-INF/LICENSE.txt")
+        exclude("META-INF/license.txt")
+        exclude("META-INF/NOTICE")
+        exclude("META-INF/NOTICE.txt")
+        exclude("META-INF/notice.txt")
+        exclude("META-INF/ASL2.0")
+        exclude("META-INF/*.kotlin_module")
+        exclude("META-INF/jdom-info.xml")
+        resources.merges.add("rome-utils-1.18.0.jar")
+
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/*.jar"
+
+            // Multiple dependency bring these files in. Exclude them to enable
+            // our test APK to build (has no effect on our AARs)
+            excludes += "/META-INF/AL2.0"
+            excludes += "/META-INF/LGPL2.1"
         }
     }
 }
