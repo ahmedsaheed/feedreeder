@@ -13,7 +13,7 @@ import java.time.OffsetDateTime
     tableName = "episodes",
     indices = [
         Index("uri", unique = true),
-        Index("podcast_uri")
+        Index("feed_uri")
     ],
     foreignKeys = [
         ForeignKey(
