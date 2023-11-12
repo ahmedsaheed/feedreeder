@@ -2,10 +2,10 @@
     <string name="app_name">feedreeder_3061874</string>
 
     <string name="connection_error_title">Connection error</string>
-    <string name="connection_error_message">Unable to fetch podcasts feeds.\nCheck your internet connection and try again.</string>
+    <string name="connection_error_message">Unable to fetch feeds feeds.\nCheck your internet connection and try again.</string>
     <string name="retry_label">Retry</string>
 
-    <string name="your_podcasts">Your podcasts</string>
+    <string name="your_podcasts">Your Feed</string>
     <string name="latest_episodes">Latest episodes</string>
 
     <string name="home_library">Your library</string>

@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.ir.backend.js.compile
 
-
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -137,7 +137,8 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
 
-//    ksp(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
+
     coreLibraryDesugaring(libs.core.jdk.desugaring)
 }
 

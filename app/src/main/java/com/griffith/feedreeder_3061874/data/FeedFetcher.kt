@@ -70,7 +70,7 @@ private fun SyndFeed.toFeedResponse(feedUrl: String): FeedRssResponse {
     val podcastUri = uri ?: feedUrl
     val episodes = entries.map { it.toEpisode(podcastUri) }
     Log.w("feedUrl", episodes.toString());
-    val imagePath = icon.url ?: image.url
+    val imagePath = "https://mitadmissions.org/wp-content/uploads/2023/11/IMG_3971-800x797.jpg"
     val podcast = FeedCollection(
         uri = podcastUri,
         title = title,

@@ -39,12 +39,15 @@ object Graph {
     }
 
     private val feedFetcher by lazy {
-        FeedFetcher(
-            okHttpClient = okHttpClient,
-            syndFeedInput = syndFeedInput,
-            ioDispatcher = ioDispatcher
-        )
+//        if (::okHttpClient.isInitialized) {
+            FeedFetcher(
+                okHttpClient = okHttpClient,
+                syndFeedInput = syndFeedInput,
+                ioDispatcher = ioDispatcher
+            )
+//        }
     }
+
 
     val episodeStore by lazy {
         EpisodeStore(
@@ -84,8 +87,6 @@ object Graph {
             .build()
 
         db = Room.databaseBuilder(context, FeedreederDatabase::class.java, "data.db")
-            // This is not recommended for normal apps, but the goal of this sample isn't to
-            // showcase all of Room.
             .fallbackToDestructiveMigration()
             .build()
     }
