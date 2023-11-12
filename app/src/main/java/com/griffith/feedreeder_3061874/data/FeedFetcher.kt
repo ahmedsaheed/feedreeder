@@ -70,8 +70,6 @@ private fun SyndFeed.toFeedResponse(feedUrl: String): FeedRssResponse {
     val podcastUri = uri ?: feedUrl
     val episodes = entries.map { it.toEpisode(podcastUri) }
     Log.w("feedUrl", episodes.toString());
-//    val rssFaviconUrl = removeUriFromUrl(podcastUri) + "/favicon.ico"
-//    Log.w("rss_favicon", rssFaviconUrl);
     val imagePath = icon.url ?: image.url
     val podcast = FeedCollection(
         uri = podcastUri,
