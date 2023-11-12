@@ -1,5 +1,6 @@
 package com.griffith.feedreeder_3061874.data
 
+import com.griffith.feedreeder_3061874.data.room.FeedFollowedEntryDao
 import com.griffith.feedreeder_3061874.data.room.FeedsDao
 import com.griffith.feedreeder_3061874.data.room.TransactionRunner
 import kotlinx.coroutines.flow.Flow
