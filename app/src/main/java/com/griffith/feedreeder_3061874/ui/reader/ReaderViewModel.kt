@@ -21,7 +21,7 @@ data class ReaderUiState(
     val title: String = "",
     val subTitle: String = "",
     val duration: Duration? = null,
-    val podcastName: String = "",
+    val feedName: String = "",
     val author: String = "",
     val summary: String = "",
     val podcastImageUrl: String = "",
@@ -46,7 +46,7 @@ class ReaderViewModel (
             uiState = ReaderUiState(
                 title = episode.title,
                 duration = episode.duration,
-                podcastName = feed.title,
+                feedName = feed.title,
                 summary = episode.summary ?: "",
                 podcastImageUrl = feed.imageUrl ?: "",
                 content = episode.content

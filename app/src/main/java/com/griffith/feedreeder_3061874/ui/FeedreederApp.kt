@@ -14,6 +14,8 @@ import androidx.navigation.compose.composable
 import androidx.window.layout.DisplayFeature
 import com.griffith.feedreeder_3061874.R
 import com.griffith.feedreeder_3061874.ui.home.Home
+import com.griffith.feedreeder_3061874.ui.reader.ReaderScreen
+import com.griffith.feedreeder_3061874.ui.reader.ReaderViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -35,18 +37,19 @@ fun FeedreederApp(
                 )
             }
             composable(Screen.Reader.route) { backStackEntry ->
-//                val playerViewModel:  = viewModel(
-//                    factory = PlayerViewModel.provideFactory(
-//                        owner = backStackEntry,
-//                        defaultArgs = backStackEntry.arguments
-//                    )
-//                )
-//                PlayerScreen(
-//                    playerViewModel,
-//                    windowSizeClass,
-//                    displayFeatures,
-//                    onBackPress = appState::navigateBack
-//                )
+                val readerViewModel: ReaderViewModel = viewModel(
+                    factory = ReaderViewModel.provideFactory(
+                        owner = backStackEntry,
+                        defaultArgs = backStackEntry.arguments
+                    )
+                )
+
+                ReaderScreen(
+                    readerViewModel,
+                    windowSizeClass,
+                    displayFeature,
+                    onBackPress = appState::navigateBack
+                )
             }
         }
     }else{
