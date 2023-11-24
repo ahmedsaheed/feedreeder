@@ -53,7 +53,7 @@ class FeedFetcher (
             .build()
 
         val response = okHttpClient.newCall(request).await()
-
+        Log.w("responseFromHttpReq", response.toString());
         if (!response.isSuccessful) throw HttpException(response)
         return withContext(ioDispatcher) {
             response.body!!.use {

@@ -60,7 +60,7 @@ abstract class FeedsDao: BaseDao<FeedCollection> {
     @Transaction
     @Query(
     """
-        SELECT feeds.*, last_episode_date, (followed_entries.feed_uri IS NOT NULL) is_followed
+        SELECT feeds.*, last_episode_date, (followed_entries.feed_uri IS NOT NULL) AS  is_followed
         FROM feeds
         INNER JOIN (
             SELECT episode_uri, MAX(published) AS last_episode_date FROM episodes 

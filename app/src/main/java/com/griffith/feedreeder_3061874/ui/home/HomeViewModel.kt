@@ -1,6 +1,7 @@
 package com.griffith.feedreeder_3061874.ui.home
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,9 +36,17 @@ class HomeViewModel(
             combine(
                 categories,
                 selectedCategory,
-                feedStore.followedFeedSortedByLastEpisode(limit = 20),
+                feedStore.followedFeedSortedByLastEpisode(),
                 refreshing
             ) { categories, selectedCategories, feeds, refreshing ->
+
+                Log.w("HomeViewModel", "HomeViewState: ${HomeViewState(
+                    homeCategories = categories,
+                    selectedHomeCategory = selectedCategories,
+                    featuredFeeds = feeds.toPersistentList(),
+                    refreshing = refreshing,
+                    errorMessage = null /*TODO*/
+                )}")
                 HomeViewState(
                     homeCategories = categories,
                     selectedHomeCategory = selectedCategories,

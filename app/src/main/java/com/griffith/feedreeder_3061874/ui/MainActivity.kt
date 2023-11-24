@@ -1,5 +1,6 @@
 package com.griffith.feedreeder_3061874.ui
 
+import android.app.Application
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,17 +16,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
+import coil.ImageLoader
+import coil.ImageLoaderFactory
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import com.griffith.feedreeder_3061874.Graph
 import com.griffith.feedreeder_3061874.ui.FeedreederApp
 import com.griffith.feedreeder_3061874.ui.theme.Feedreeder_3061874Theme
 
 class MainActivity : ComponentActivity() {
+
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Graph.provide(this)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {

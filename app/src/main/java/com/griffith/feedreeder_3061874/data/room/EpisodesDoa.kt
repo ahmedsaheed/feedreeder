@@ -1,11 +1,12 @@
 package com.griffith.feedreeder_3061874.data.room
 
+import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.griffith.feedreeder_3061874.data.Episode
 import com.griffith.feedreeder_3061874.data.EpisodeToFeed
 import kotlinx.coroutines.flow.Flow
-
+@Dao
 abstract  class EpisodesDoa : BaseDao<Episode> {
     @Query(
         """

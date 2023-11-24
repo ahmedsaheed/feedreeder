@@ -13,13 +13,13 @@ import java.time.OffsetDateTime
     tableName = "episodes",
     indices = [
         Index("uri", unique = true),
-        Index("feed_uri")
+        Index("episode_uri")
     ],
     foreignKeys = [
         ForeignKey(
             entity = FeedCollection::class,
             parentColumns = ["uri"],
-            childColumns = ["feed_uri"],
+            childColumns = ["episode_uri"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )

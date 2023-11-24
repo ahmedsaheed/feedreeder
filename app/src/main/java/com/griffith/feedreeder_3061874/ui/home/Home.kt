@@ -1,6 +1,7 @@
 package com.griffith.feedreeder_3061874.ui.home
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -118,7 +119,7 @@ fun HomeContent(
     ) {
         //  dynamically theme this sub-section of the layout to match the selected
         // 'top feeds'
-
+        Log.w("HomeContent", "featuredFeeds: $featuredFeeds")
         val surfaceColor = MaterialTheme.colors.surface
         val appBarColor = surfaceColor.copy(alpha = 0.87f)
         val dominantColorState = rememberDominantColorState { color ->

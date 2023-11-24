@@ -1,5 +1,6 @@
 package com.griffith.feedreeder_3061874.ui.home.discover
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.griffith.feedreeder_3061874.Graph
 import com.griffith.feedreeder_3061874.data.Category
@@ -24,9 +25,10 @@ class DiscoverViewModel(
     init {
         viewModelScope.launch {
             combine(
-                categoryStore.categoriesSortedByFeedCount()
+                categoryStore.categoriesSortedByFeedCount(limit = 10)
                     .onEach { categories ->
-                        if (categories.isEmpty() && _selectedCategory.value == null) {
+                        Log.w("DiscoverViewModel", "DiscoverViewModel: categories: $categories")
+                        if (categories.isNotEmpty() && _selectedCategory.value == null) {
                             _selectedCategory.value = categories[0]
                         }
                     },

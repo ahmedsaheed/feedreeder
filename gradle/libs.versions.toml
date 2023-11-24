@@ -26,8 +26,9 @@ androidxHiltNavigationCompose = "1.0.0"
 androix-test-uiautomator = "2.2.0"
 coil = "2.2.2"
 # @keep
+coil-kt-coil = "2.5.0"
 compileSdk = "34"
-compose-compiler = "1.4.0"
+compose-compiler = "1.4.2"
 coreKtx = "1.9.0"
 coroutines = "1.7.3"
 google-maps = "18.1.0"
@@ -113,6 +114,7 @@ androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-
 androidx-test-runner = "androidx.test:runner:1.5.2"
 androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androix-test-uiautomator" }
 androidx-window = { module = "androidx.window:window", version.ref = "androidx-window" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil-kt-coil" }
 coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 core-jdk-desugaring = { module = "com.android.tools:desugar_jdk_libs", version.ref = "jdkDesugar" }
 google-android-material = { module = "com.google.android.material:material", version.ref = "material" }

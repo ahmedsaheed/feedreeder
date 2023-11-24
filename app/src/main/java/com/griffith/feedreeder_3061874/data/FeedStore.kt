@@ -1,5 +1,6 @@
 package com.griffith.feedreeder_3061874.data
 
+import android.util.Log
 import com.griffith.feedreeder_3061874.data.room.FeedFollowedEntryDao
 import com.griffith.feedreeder_3061874.data.room.FeedsDao
 import com.griffith.feedreeder_3061874.data.room.TransactionRunner
@@ -21,7 +22,9 @@ class FeedStore (
     fun followedFeedSortedByLastEpisode(
         limit: Int = Int.MAX_VALUE
     ) : Flow<List<FeedsExtraInfo>> {
-        return feedDao.followedFeedsSortedByLastEpisode(limit)
+        val res = feedDao.followedFeedsSortedByLastEpisode(limit)
+        Log.w("FeedStore", "followedFeedSortedByLastEpisode: $res")
+        return res
     }
 
     private suspend fun followedFeed(feedUri: String){

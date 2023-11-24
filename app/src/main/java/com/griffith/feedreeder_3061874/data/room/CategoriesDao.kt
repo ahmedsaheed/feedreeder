@@ -1,9 +1,10 @@
 package com.griffith.feedreeder_3061874.data.room
 
+import androidx.room.Dao
 import androidx.room.Query
 import com.griffith.feedreeder_3061874.data.Category
 import kotlinx.coroutines.flow.Flow
-
+@Dao
 abstract class CategoriesDao : BaseDao<Category> {
     @Query(
         """

@@ -1,6 +1,7 @@
 package com.griffith.feedreeder_3061874.data
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.griffith.feedreeder_3061874.data.room.TransactionRunner
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,8 +28,14 @@ class FeedRepository(
             refreshingJob?.join()
         } else if (force || feedStore.isEmpty()) {
             refreshingJob = scope.launch {
-                feedFetcher(SampleFeeds)
-                    .filter { it is FeedRssResponse.Success }
+                val res = feedFetcher(SampleFeeds)
+//                Log.w("responseFromFeedRepo", res.toString());
+                // log the response from the flow
+//                .collect { value -> _state.value = value }
+                res.collect { value -> println(value) }
+
+                res.collect { Log.w("responseFromFeedRepo", it.toString()) }
+                    res.filter { it is FeedRssResponse.Success }
                     .map { it as FeedRssResponse.Success }
                     .collect { (feed, episodes, categories) ->
                         transactionRunner {

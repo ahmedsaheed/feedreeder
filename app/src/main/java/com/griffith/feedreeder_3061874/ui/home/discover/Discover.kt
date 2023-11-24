@@ -1,7 +1,12 @@
 package com.griffith.feedreeder_3061874.ui.home.discover
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,31 +19,47 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.griffith.feedreeder_3061874.data.Category
+import com.griffith.feedreeder_3061874.ui.home.category.FeedCategory
 import com.griffith.feedreeder_3061874.ui.theme.keyline1
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Discover(
     navigateToReader: (String) -> Unit,
     modifier: Modifier
 ) {
-    val viewModel: DiscoverViewModel  = viewModel()
+    val viewModel: DiscoverViewModel = viewModel()
     val viewState by viewModel.state.collectAsStateWithLifecycle()
+
     val selectedCategory = viewState.selectedCategory
-
-    if(viewState.categories.isNotEmpty() && selectedCategory != null) {
-        Column (modifier) {
+    Log.w("Discover", "Discover: ${viewState.categories} $selectedCategory")
+    if (viewState.categories.isNotEmpty() && selectedCategory != null) {
+        Column(modifier) {
             Spacer(Modifier.height(8.dp))
-
             FeedCategoryTabs(
                categories = viewState.categories,
                 selectedCategory = selectedCategory,
                 onCategorySelected = viewModel::onCategorySelected,
                 modifier = Modifier.fillMaxWidth()
             )
+            Crossfade(
+                targetState = selectedCategory,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f), label = ""
+            ) { category ->
+
+                    FeedCategory(
+                        categoryId = category.id,
+                        navigateToReader = navigateToReader,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
         }
     }
 }
