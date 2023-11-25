@@ -24,7 +24,7 @@ fun FeedreederApp(
     displayFeature: List<DisplayFeature>,
     appState: FeedReederAppState = rememberFeedReederAppState()
 ) {
-    if(appState.isOnline) {
+    if (appState.isOnline) {
         NavHost(
             navController = appState.navController,
             startDestination = Screen.Home.route
@@ -52,8 +52,8 @@ fun FeedreederApp(
                 )
             }
         }
-    }else{
-        OfflineMode {appState.refreshOnline()}
+    } else {
+        OfflineMode { appState.refreshOnline() }
     }
 }
 

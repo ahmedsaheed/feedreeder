@@ -1,7 +1,7 @@
 package com.griffith.feedreeder_3061874.ui.reader
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.view.Gravity
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,25 +34,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.lifecycleScope
+import androidx.core.content.res.ResourcesCompat
 import androidx.window.layout.DisplayFeature
 import com.griffith.feedreeder_3061874.R
 import com.griffith.feedreeder_3061874.ui.theme.verticalGradientScrim
-import com.saka.android.htmltextview.HtmlTextView
+import org.sufficientlysecure.htmltextview.HtmlAssetsImageGetter
+import org.sufficientlysecure.htmltextview.HtmlFormatter
+import org.sufficientlysecure.htmltextview.HtmlFormatterBuilder
+import org.sufficientlysecure.htmltextview.HtmlResImageGetter
+import org.sufficientlysecure.htmltextview.HtmlTextView
 
 @Composable
 fun ReaderScreen(
-  viewModel: ReaderViewModel,
-  windowSizeClass: WindowSizeClass,
-  displayFeature: List<DisplayFeature>,
-  onBackPress: () -> Unit,
-){
+    viewModel: ReaderViewModel,
+    windowSizeClass: WindowSizeClass,
+    displayFeature: List<DisplayFeature>,
+    onBackPress: () -> Unit,
+) {
     val uiState = viewModel.uiState
     ReaderScreen(
         uiState = uiState,
@@ -62,6 +68,56 @@ fun ReaderScreen(
     )
 }
 
+@Composable
+fun HtmlRender(
+    modifier: Modifier = Modifier,
+    html: String,
+    textStyle: TextStyle = MaterialTheme.typography.subtitle1,
+    onLink1Clicked: (() -> Unit)? = null,
+    onLink2Clicked: (() -> Unit)? = null
+) {
+
+    val ctx = LocalContext.current
+    val fontResId = when (textStyle.fontWeight) {
+        FontWeight.Medium -> R.font.montserrat_medium
+        else -> R.font.montserrat_regular
+    }
+    val font = ResourcesCompat.getFont(ctx, fontResId)
+    AndroidView(
+        factory = { ctx ->
+            val gravity = when (textStyle.textAlign) {
+                TextAlign.Center -> Gravity.CENTER
+                TextAlign.End -> Gravity.END
+                else -> Gravity.START
+            }
+            val fontResId = when (textStyle.fontWeight) {
+                FontWeight.Medium -> R.font.montserrat_medium
+                else -> R.font.montserrat_regular
+            }
+            val font = ResourcesCompat.getFont(ctx, fontResId)
+
+            HtmlTextView(ctx).apply {
+                textSize = textStyle.fontSize.value
+                setLineSpacing(5f, 1f)
+                setTextColor(Color.White.toArgb())
+                setGravity(gravity)
+                setOnClickATagListener { _, _, href ->
+                    Toast.makeText(context, "Clicked $href", Toast.LENGTH_SHORT).show()
+                    false
+                }
+                typeface = font
+                val imageGetter = HtmlAssetsImageGetter(ctx)
+                val formattedHtml = HtmlFormatter.formatHtml(
+                    HtmlFormatterBuilder().setHtml(html)
+                        .setImageGetter(imageGetter)
+                )
+                text = formattedHtml
+            }
+        },
+
+        )
+
+}
 
 @Composable
 private fun ReaderScreen(
@@ -79,7 +135,7 @@ private fun ReaderScreen(
                 displayFeature = displayFeature,
                 onBackPress = onBackPress
             )
-        }else{
+        } else {
             FullScreenLoading()
         }
     }
@@ -97,7 +153,13 @@ fun FullScreenLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ReaderContent(uiState: ReaderUiState, windowSizeClass: WindowSizeClass, displayFeature: List<DisplayFeature>, onBackPress: () -> Unit,     modifier: Modifier = Modifier) {
+fun ReaderContent(
+    uiState: ReaderUiState,
+    windowSizeClass: WindowSizeClass,
+    displayFeature: List<DisplayFeature>,
+    onBackPress: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     ReaderForContent(uiState, onBackPress, modifier)
 }
 
@@ -120,9 +182,7 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
         ) {
             FeedDescription(uiState.title, uiState.feedName, uiState.author)
             Spacer(modifier = Modifier.height(12.dp))
-            Column(
-//                modifier = Modifier.weight(10f)
-            ) {
+            Column {
                 FeedContent(uiState.content)
             }
         }
@@ -130,7 +190,7 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
 }
 
 @Composable
-fun FeedContent(content: String?,  modifier: Modifier = Modifier) {
+fun FeedContent(content: String?, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .padding(horizontal = 8.dp)
@@ -140,31 +200,21 @@ fun FeedContent(content: String?,  modifier: Modifier = Modifier) {
             .background(Color.Transparent)
         // make text color white
     ) {
-        content?.let { HtmlText(html = it) }
+        content?.let { FeedContentDisplay(html = it) }
     }
 }
 
 @Composable
-fun HtmlText(html: String, modifier: Modifier = Modifier) {
-    val ctx = LocalContext.current
-    val lifeCycleScope = LocalLifecycleOwner.current.lifecycleScope
-    AndroidView(
-        modifier = modifier.background(Color.Transparent),
-        factory = { ctx ->
-            HtmlTextView(ctx).apply {
-                setText(
-                    html ?: "nothing really", lifeCycleScope
-                )
-            }
-        },
-        update = { view ->
-            view.updateTextSize(16f)
-        }
-    )
+fun FeedContentDisplay(html: String, modifier: Modifier = Modifier) {
+    HtmlRender(html = html)
 }
 
 @Composable
-fun FeedDescription(title: String, feedName: String, author: String,     titleTextStyle: TextStyle = MaterialTheme.typography.h5
+fun FeedDescription(
+    title: String,
+    feedName: String,
+    author: String,
+    titleTextStyle: TextStyle = MaterialTheme.typography.h5
 ) {
     Text(
         text = title,

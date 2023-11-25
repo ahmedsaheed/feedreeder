@@ -5,6 +5,7 @@ initscript {
 
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
