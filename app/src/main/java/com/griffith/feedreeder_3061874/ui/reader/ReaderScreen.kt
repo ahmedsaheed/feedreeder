@@ -46,10 +46,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.window.layout.DisplayFeature
 import com.griffith.feedreeder_3061874.R
 import com.griffith.feedreeder_3061874.ui.theme.verticalGradientScrim
-import org.sufficientlysecure.htmltextview.HtmlAssetsImageGetter
 import org.sufficientlysecure.htmltextview.HtmlFormatter
 import org.sufficientlysecure.htmltextview.HtmlFormatterBuilder
-import org.sufficientlysecure.htmltextview.HtmlResImageGetter
+import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 import org.sufficientlysecure.htmltextview.HtmlTextView
 
 @Composable
@@ -106,7 +105,7 @@ fun HtmlRender(
                     false
                 }
                 typeface = font
-                val imageGetter = HtmlAssetsImageGetter(ctx)
+                val imageGetter = HtmlHttpImageGetter(this)
                 val formattedHtml = HtmlFormatter.formatHtml(
                     HtmlFormatterBuilder().setHtml(html)
                         .setImageGetter(imageGetter)
