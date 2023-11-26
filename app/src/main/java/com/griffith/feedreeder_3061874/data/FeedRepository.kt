@@ -28,16 +28,11 @@ class FeedRepository(
             refreshingJob?.join()
         } else if (force || feedStore.isEmpty()) {
             refreshingJob = scope.launch {
-                val res = feedFetcher(SampleFeeds)
-//                Log.w("responseFromFeedRepo", res.toString());
-                // log the response from the flow
-//                .collect { value -> _state.value = value }
-                res.collect { value -> println(value) }
-
-                res.collect { Log.w("responseFromFeedRepo", it.toString()) }
-                    res.filter { it is FeedRssResponse.Success }
+               feedFetcher(SampleFeeds)
+                   .filter { it is FeedRssResponse.Success }
                     .map { it as FeedRssResponse.Success }
                     .collect { (feed, episodes, categories) ->
+                        Log.w("FeedRepository", "Successful feeds after check: $feed")
                         transactionRunner {
                             feedStore.addFeed(feed)
                             episodeStore.addEpisodes(episodes)

@@ -4,10 +4,11 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import coil.network.HttpException
+import com.rometools.modules.cc.CreativeCommons
 import com.rometools.modules.itunes.EntryInformation
+import com.rometools.rome.feed.synd.SyndCategory
 import com.rometools.rome.feed.synd.SyndEntry
 import com.rometools.rome.feed.synd.SyndFeed
-import java.util.concurrent.TimeUnit
 import com.rometools.rome.io.SyndFeedInput
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,10 +21,12 @@ import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.net.URL
 import java.time.Duration
 import java.time.ZoneOffset
+import java.util.concurrent.TimeUnit
 
-class FeedFetcher (
+class FeedFetcher(
     private val okHttpClient: OkHttpClient,
     private val syndFeedInput: SyndFeedInput,
     private val ioDispatcher: CoroutineDispatcher
@@ -31,7 +34,6 @@ class FeedFetcher (
     private val cacheControl by lazy {
         CacheControl.Builder().maxStale(8, TimeUnit.HOURS).build()
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(feedUrls: List<String>): Flow<FeedRssResponse> {
@@ -47,41 +49,39 @@ class FeedFetcher (
 
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun fetchFeed(url: String): FeedRssResponse {
-        val request =  Request.Builder()
+        val request = Request.Builder()
             .url(url)
             .cacheControl(cacheControl)
             .build()
 
         val response = okHttpClient.newCall(request).await()
-        Log.w("responseFromHttpReq", response.toString());
+        Log.w("responseFromHttpReq", response.toString())
         if (!response.isSuccessful) throw HttpException(response)
         return withContext(ioDispatcher) {
-            response.body!!.use {
-                body ->
+            response.body!!.use { body ->
                 syndFeedInput.build(body.charStream()).toFeedResponse(url)
             }
         }
     }
 }
 
-
+fun feedIcon(link: String): String = "https://icon.horse/icon/${URL(link).host!!}"
+private fun SyndCategory.toCategories(): Category = Category(name = name)
 @RequiresApi(Build.VERSION_CODES.O)
 private fun SyndFeed.toFeedResponse(feedUrl: String): FeedRssResponse {
-    val podcastUri = uri ?: feedUrl
-    val episodes = entries.map { it.toEpisode(podcastUri) }
-    Log.w("feedUrl", episodes.toString());
-    val imagePath = "https://mitadmissions.org/wp-content/uploads/2023/11/IMG_3971-800x797.jpg"
+    val feedurl = uri ?: feedUrl
     val podcast = FeedCollection(
-        uri = podcastUri,
+        uri = feedurl,
         title = title,
-        description =  description,
+        description = description,
         author = author,
         copyright = copyright,
-        imageUrl =  imagePath
+        imageUrl = feedIcon(feedurl)
     )
-    val categories = entries.map { it.categories }.flatten().map { Category(0, it.name) }.toSet()
-    Log.w("categories", categories.toString());
-    Log.w("essays", podcast.toString());
+    Log.d("Categories", categories.toString())
+    val episodes = entries.map { it.toEpisode(feedurl) }
+    val categories = categories.map { it.toCategories() }.toSet()
+
     return FeedRssResponse.Success(podcast, episodes, categories)
 }
 
@@ -89,12 +89,12 @@ private fun SyndFeed.toFeedResponse(feedUrl: String): FeedRssResponse {
  * Map a Rome [SyndEntry] instance to our own [Episode] data class.
  */
 @RequiresApi(Build.VERSION_CODES.O)
-private fun SyndEntry.toEpisode(EpisodeUri: String): Episode {
+private fun SyndEntry.toEpisode(episodeUri: String): Episode {
     val content = contents.firstOrNull()
-    val entryInformation = getModule(PodcastModuleDtd) as? EntryInformation
-    val ep =  Episode(
+    val entryInformation = getModule(CreativeCommons.URI) as EntryInformation?
+    val ep = Episode(
         uri = uri,
-        episodeUri = EpisodeUri,
+        episodeUri = episodeUri,
         title = title,
         author = author,
         summary = entryInformation?.summary ?: description?.value ?: "Hi Mom",
@@ -102,20 +102,17 @@ private fun SyndEntry.toEpisode(EpisodeUri: String): Episode {
         published = publishedDate.toInstant().atOffset(ZoneOffset.UTC),
         duration = entryInformation?.duration?.milliseconds?.let { Duration.ofMillis(it) },
         content = content?.value
-
     )
-
-
-    Log.w("episodes", ep.toString());
-    Log.w("entry", entryInformation.toString());
-    Log.w("content availability", content.toString());
+    Log.w("episodes", ep.toString())
+    Log.w("entry", entryInformation.toString())
+    Log.w("content availability", content.toString())
     return ep
 }
+
 sealed class FeedRssResponse {
     data class Error(
         val throwable: Throwable?,
     ) : FeedRssResponse()
-
     data class Success(
         val podcast: FeedCollection,
         val episodes: List<Episode>,
@@ -123,11 +120,3 @@ sealed class FeedRssResponse {
     ) : FeedRssResponse()
 }
 
-
-/**
- * Most feeds use the following DTD to include extra information related to
- * their podcast. Info such as images, summaries, duration, categories is sometimes only available
- * via this attributes in this DTD.
- */
-private const val PodcastModuleDtd = "http://www.itunes.com/dtds/podcast-1.0.dtd"
-private const val ContentModuleDtd = "http://purl.org/rss/1.0/modules/content/"
