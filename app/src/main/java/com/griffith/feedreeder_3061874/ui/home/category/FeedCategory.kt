@@ -28,12 +28,15 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlaylistAdd
+import androidx.compose.material.icons.rounded.AutoStories
 import androidx.compose.material.icons.rounded.PlayCircleFilled
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -223,9 +226,8 @@ fun EpisodeListItem(
             )
 
             Image(
-                imageVector = Icons.Rounded.PlayCircleFilled,
-                //TODO add icon
-                contentDescription = stringResource(R.string.cd_play),
+                imageVector = Icons.Rounded.AutoStories,
+                contentDescription = stringResource(R.string.cd_read),
                 contentScale = ContentScale.Fit,
                 colorFilter = ColorFilter.tint(LocalContentColor.current),
                 modifier = Modifier
@@ -233,7 +235,7 @@ fun EpisodeListItem(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false, radius = 24.dp)
                     ) { /* TODO */ }
-                    .size(48.dp)
+                    .size(40.dp)
                     .padding(6.dp)
                     .semantics { role = Role.Button }
                     .constrainAs(playIcon) {
@@ -247,10 +249,7 @@ fun EpisodeListItem(
                 Text(
                     text = when {
                         episode.duration != null -> {
-                            // If we have the duration, we combine the date/duration via a
-                            // formatted string
                             //TODO add icon
-
                             stringResource(
                                 R.string.episode_date_duration,
                                 MediumDateFormatter.format(episode.published),
@@ -285,8 +284,8 @@ fun EpisodeListItem(
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PlaylistAdd,
-                        contentDescription = stringResource(R.string.cd_add)
+                        imageVector = Icons.Default.BookmarkAdd,
+                        contentDescription = stringResource(R.string.cd_bookmark)
                     )
                 }
 

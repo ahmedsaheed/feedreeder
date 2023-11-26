@@ -66,7 +66,9 @@ class FeedFetcher(
 }
 
 fun feedIcon(link: String): String = "https://icon.horse/icon/${URL(link).host!!}"
-private fun SyndCategory.toCategories(): Category = Category(name = name)
+private fun toCategories(name : String): List<Category> =
+    listOf(Category(name = name))
+
 @RequiresApi(Build.VERSION_CODES.O)
 private fun SyndFeed.toFeedResponse(feedUrl: String): FeedRssResponse {
     val feedurl = uri ?: feedUrl
@@ -80,7 +82,7 @@ private fun SyndFeed.toFeedResponse(feedUrl: String): FeedRssResponse {
     )
     Log.d("Categories", categories.toString())
     val episodes = entries.map { it.toEpisode(feedurl) }
-    val categories = categories.map { it.toCategories() }.toSet()
+    val categories = toCategories(title).toSet()
 
     return FeedRssResponse.Success(podcast, episodes, categories)
 }
