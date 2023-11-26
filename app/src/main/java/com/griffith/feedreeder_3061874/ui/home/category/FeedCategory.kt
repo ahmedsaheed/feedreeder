@@ -235,7 +235,7 @@ fun EpisodeListItem(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false, radius = 24.dp)
                     ) { /* TODO */ }
-                    .size(40.dp)
+                    .size(32.dp)
                     .padding(6.dp)
                     .semantics { role = Role.Button }
                     .constrainAs(playIcon) {
