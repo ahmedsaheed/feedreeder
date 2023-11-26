@@ -57,6 +57,22 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun getLightSensor(event: SensorEvent) {
         Log.w("LightFromSensor", "Light: ${event.values[0].toString()}")
+        var grayShade = event.values[0].toInt()
+        if (grayShade > 255) grayShade = 255
+
+        if (grayShade < 10) {
+            Toast.makeText(this, "It's too dark here! Increasing brightness", Toast.LENGTH_SHORT).show()
+            val layoutParams = window.attributes
+            layoutParams.screenBrightness = 1f
+            window.attributes = layoutParams
+        }
+
+        if (grayShade > 200) {
+            Toast.makeText(this, "It's too bright here! Decreasing brightness", Toast.LENGTH_SHORT).show()
+            val layoutParams = window.attributes
+            layoutParams.screenBrightness = 0.1f
+            window.attributes = layoutParams
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) =
