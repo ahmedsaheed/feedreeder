@@ -84,7 +84,7 @@ fun ReaderScreen(
 fun HtmlRender(
     modifier: Modifier = Modifier,
     html: String,
-    textStyle: TextStyle = MaterialTheme.typography.subtitle1,
+    textStyle: TextStyle = MaterialTheme.typography.body1,
 ) {
 
     val ctx = LocalContext.current
@@ -93,6 +93,7 @@ fun HtmlRender(
         else -> R.font.montserrat_regular
     }
     val font = ResourcesCompat.getFont(ctx, fontResId)
+
     AndroidView(
         factory = { ctx ->
             val gravity = when (textStyle.textAlign) {
@@ -104,38 +105,46 @@ fun HtmlRender(
                 FontWeight.Medium -> R.font.montserrat_medium
                 else -> R.font.montserrat_regular
             }
-            HtmlTextView(ctx).apply {
+
+            val view = HtmlTextView(ctx)
+            view.blockQuoteBackgroundColor = Color.Transparent.toArgb()
+            view.blockQuoteGap = 20f
+            view.blockQuoteStripColor = Color.LightGray.toArgb()
+
+            view.setOnClickATagListener(OnClickATagListener { widget, spannedText, href ->
+                openHtmlLink(
+                    widget,
+                    href!!
+                )
+            })
+            view.movementMethod = LocalLinkMovementMethod.getInstance()
+            view.setHtml(html, HtmlHttpImageGetter(view, null, true))
+            view.apply {
                 textSize = textStyle.fontSize.value
                 typeface = ResourcesCompat.getFont(ctx, fontResId)
                 setLineSpacing(5f, 1f)
                 setTextColor(Color.White.toArgb())
-                setLinkTextColor(Color.Magenta.toArgb())
+                setLinkTextColor(Color.White.toArgb())
                 setGravity(gravity)
-                val imageGetter = HtmlHttpImageGetter(this, null, true)
-                val builder = HtmlFormatterBuilder()
-                    .setHtml(html)
-                    .setImageGetter(imageGetter)
-                builder.onClickATagListener =
-                    OnClickATagListener { widget, spannedText, href ->
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.data = Uri.parse(href)
-                        try {
-                            startActivity(ctx, intent, null)
-                            true
-                        } catch (e: Exception) {
-                            false
-                        }
-                    }
-                val formattedHtml = HtmlFormatter.formatHtml(builder)
-
-                movementMethod = LocalLinkMovementMethod.getInstance()
-                text = formattedHtml
             }
 
+            view
         },
 
         )
 
+}
+
+fun openHtmlLink(view: View, url: String): Boolean {
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = Uri.parse(url)
+    return try {
+        startActivity(view.context, intent, null)
+        true
+    } catch (e: Exception) {
+        Log.e("ReaderScreen", "Error opening link $url", e)
+        false
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
