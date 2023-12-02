@@ -200,7 +200,7 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
             .systemBarsPadding()
             .padding(horizontal = 8.dp)
     ) {
-        TopAppBar(onBackPress = onBackPress)
+        TopAppBar(onBackPress = onBackPress, contentUri = uiState.contentUri)
         Column(
             modifier = Modifier.padding(horizontal = 8.dp)
         ) {
@@ -285,7 +285,8 @@ fun FeedDescription(
 
 
 @Composable
-private fun TopAppBar(onBackPress: () -> Unit) {
+private fun TopAppBar(onBackPress: () -> Unit, contentUri: String) {
+    val ctx = LocalContext.current
     Row(Modifier.fillMaxWidth()) {
         IconButton(onClick = onBackPress) {
             Icon(
@@ -300,10 +301,19 @@ private fun TopAppBar(onBackPress: () -> Unit) {
                 contentDescription = stringResource(R.string.cd_add)
             )
         }
-        IconButton(onClick = { /* TODO */ }) {
+        IconButton(onClick = {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, "Hey, check out this article: $contentUri")
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(ctx, shareIntent, null)
+        }) {
             Icon(
                 imageVector = Icons.Default.Share,
-                contentDescription = stringResource(R.string.cd_more)
+                contentDescription = stringResource(R.string.cd_share)
             )
         }
     }
