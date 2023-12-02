@@ -1,14 +1,14 @@
 package com.griffith.feedreeder_3061874.ui.reader
 
-import androidx.compose.foundation.clickable
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.view.Gravity
-import android.widget.Toast
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,6 +57,7 @@ import org.sufficientlysecure.htmltextview.HtmlFormatter
 import org.sufficientlysecure.htmltextview.HtmlFormatterBuilder
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 import org.sufficientlysecure.htmltextview.HtmlTextView
+import org.sufficientlysecure.htmltextview.LocalLinkMovementMethod
 import org.sufficientlysecure.htmltextview.OnClickATagListener
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -84,8 +85,6 @@ fun HtmlRender(
     modifier: Modifier = Modifier,
     html: String,
     textStyle: TextStyle = MaterialTheme.typography.subtitle1,
-    onLink1Clicked: (() -> Unit)? = null,
-    onLink2Clicked: (() -> Unit)? = null
 ) {
 
     val ctx = LocalContext.current
@@ -105,35 +104,34 @@ fun HtmlRender(
                 FontWeight.Medium -> R.font.montserrat_medium
                 else -> R.font.montserrat_regular
             }
-            val font = ResourcesCompat.getFont(ctx, fontResId)
-
             HtmlTextView(ctx).apply {
                 textSize = textStyle.fontSize.value
+                typeface = ResourcesCompat.getFont(ctx, fontResId)
                 setLineSpacing(5f, 1f)
                 setTextColor(Color.White.toArgb())
                 setLinkTextColor(Color.Magenta.toArgb())
                 setGravity(gravity)
-                setOnClickATagListener(OnClickATagListener { widget, spannedText, href ->
-                    Log.w("LinkClicked", "Link: $href")
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(href)
-
-                    if (!href?.contains("http")!!) {
-                        Toast.makeText(ctx, "This is not a valid link", Toast.LENGTH_SHORT).show()
-                        false
-                    } else {
-                        startActivity(ctx, intent, null)
-                        true
+                val imageGetter = HtmlHttpImageGetter(this, null, true)
+                val builder = HtmlFormatterBuilder()
+                    .setHtml(html)
+                    .setImageGetter(imageGetter)
+                builder.onClickATagListener =
+                    OnClickATagListener { widget, spannedText, href ->
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = Uri.parse(href)
+                        try {
+                            startActivity(ctx, intent, null)
+                            true
+                        } catch (e: Exception) {
+                            false
+                        }
                     }
-                })
-                typeface = font
-                val imageGetter = HtmlHttpImageGetter(this)
-                val formattedHtml = HtmlFormatter.formatHtml(
-                    HtmlFormatterBuilder().setHtml(html)
-                        .setImageGetter(imageGetter)
-                )
+                val formattedHtml = HtmlFormatter.formatHtml(builder)
+
+                movementMethod = LocalLinkMovementMethod.getInstance()
                 text = formattedHtml
             }
+
         },
 
         )
@@ -204,7 +202,12 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
         Column(
             modifier = Modifier.padding(horizontal = 8.dp)
         ) {
-            FeedDescription(uiState.title, uiState.publishedDate!!, uiState.feedName, uiState.contentUri)
+            FeedDescription(
+                uiState.title,
+                uiState.publishedDate!!,
+                uiState.feedName,
+                uiState.contentUri
+            )
             Spacer(modifier = Modifier.height(12.dp))
             Column {
                 FeedContent(uiState.content)

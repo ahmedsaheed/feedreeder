@@ -5,4 +5,6 @@ val SampleFeeds = listOf<String>(
     "https://feeds.skynews.com/feeds/rss/home.xml",
     "https://www.helloahmed.me/rss.xml",
     "http://www.aaronsw.com/weblog/index.xml",
+    "https://daringfireball.net/feeds/main",
+    "https://100r.co/links/rss.xml",
 )
