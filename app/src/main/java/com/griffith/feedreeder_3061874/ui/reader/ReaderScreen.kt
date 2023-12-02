@@ -1,7 +1,13 @@
 package com.griffith.feedreeder_3061874.ui.reader
 
+import androidx.compose.foundation.clickable
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,8 +31,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlaylistAdd
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -42,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.window.layout.DisplayFeature
 import com.griffith.feedreeder_3061874.R
@@ -50,7 +57,12 @@ import org.sufficientlysecure.htmltextview.HtmlFormatter
 import org.sufficientlysecure.htmltextview.HtmlFormatterBuilder
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 import org.sufficientlysecure.htmltextview.HtmlTextView
+import org.sufficientlysecure.htmltextview.OnClickATagListener
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ReaderScreen(
     viewModel: ReaderViewModel,
@@ -99,11 +111,21 @@ fun HtmlRender(
                 textSize = textStyle.fontSize.value
                 setLineSpacing(5f, 1f)
                 setTextColor(Color.White.toArgb())
+                setLinkTextColor(Color.Magenta.toArgb())
                 setGravity(gravity)
-                setOnClickATagListener { _, _, href ->
-                    Toast.makeText(context, "Clicked $href", Toast.LENGTH_SHORT).show()
-                    false
-                }
+                setOnClickATagListener(OnClickATagListener { widget, spannedText, href ->
+                    Log.w("LinkClicked", "Link: $href")
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(href)
+
+                    if (!href?.contains("http")!!) {
+                        Toast.makeText(ctx, "This is not a valid link", Toast.LENGTH_SHORT).show()
+                        false
+                    } else {
+                        startActivity(ctx, intent, null)
+                        true
+                    }
+                })
                 typeface = font
                 val imageGetter = HtmlHttpImageGetter(this)
                 val formattedHtml = HtmlFormatter.formatHtml(
@@ -118,6 +140,7 @@ fun HtmlRender(
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ReaderScreen(
     uiState: ReaderUiState,
@@ -151,6 +174,7 @@ fun FullScreenLoading(modifier: Modifier = Modifier) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ReaderContent(
     uiState: ReaderUiState,
@@ -162,6 +186,7 @@ fun ReaderContent(
     ReaderForContent(uiState, onBackPress, modifier)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: Modifier) {
     Column(
@@ -179,7 +204,7 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
         Column(
             modifier = Modifier.padding(horizontal = 8.dp)
         ) {
-            FeedDescription(uiState.title, uiState.feedName, uiState.author)
+            FeedDescription(uiState.title, uiState.publishedDate!!, uiState.feedName, uiState.contentUri)
             Spacer(modifier = Modifier.height(12.dp))
             Column {
                 FeedContent(uiState.content)
@@ -192,7 +217,7 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
 fun FeedContent(content: String?, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 12.dp)
             .verticalScroll(rememberScrollState())
             // make the bg color the same as the surface color
             .clip(MaterialTheme.shapes.large)
@@ -208,34 +233,53 @@ fun FeedContentDisplay(html: String, modifier: Modifier = Modifier) {
     HtmlRender(html = html)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FeedDescription(
     title: String,
+    publishedDate: OffsetDateTime,
     feedName: String,
-    author: String,
+    contentUri: String,
     titleTextStyle: TextStyle = MaterialTheme.typography.h5
 ) {
-    Text(
-        text = title,
-        style = titleTextStyle,
-        modifier = Modifier.padding(start = 8.dp)
+    val ctx = LocalContext.current
+    Box(
+        modifier = Modifier
+            .clickable {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(contentUri)
+                startActivity(ctx, intent, null)
+            }
+            .padding(8.dp)
+            .clip(MaterialTheme.shapes.medium)
+    ) {
+        Column {
 
-    )
-    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-        Text(
-            text = author,
-            style = MaterialTheme.typography.subtitle2,
-            modifier = Modifier.padding(start = 8.dp),
-            maxLines = 1
-        )
-    }
-    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-        Text(
-            text = feedName,
-            style = MaterialTheme.typography.subtitle2,
-            modifier = Modifier.padding(start = 8.dp),
-            maxLines = 1
-        )
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                Text(
+                    text = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(publishedDate)
+                        .uppercase(),
+                    style = MaterialTheme.typography.overline,
+                    modifier = Modifier.padding(start = 8.dp),
+                    maxLines = 1
+                )
+            }
+            Text(
+                text = title,
+                style = titleTextStyle,
+                modifier = Modifier.padding(start = 8.dp)
+
+            )
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                Text(
+                    text = feedName.uppercase(),
+                    style = MaterialTheme.typography.overline,
+                    modifier = Modifier.padding(start = 8.dp),
+                    maxLines = 1
+                )
+
+            }
+        }
     }
 }
 
@@ -258,7 +302,7 @@ private fun TopAppBar(onBackPress: () -> Unit) {
         }
         IconButton(onClick = { /* TODO */ }) {
             Icon(
-                imageVector = Icons.Default.MoreVert,
+                imageVector = Icons.Default.Share,
                 contentDescription = stringResource(R.string.cd_more)
             )
         }

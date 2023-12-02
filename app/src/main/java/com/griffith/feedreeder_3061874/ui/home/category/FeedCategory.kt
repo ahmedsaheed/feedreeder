@@ -358,7 +358,7 @@ fun EpisodeListItem(
     }
 
 
-private val MediumDateFormatter by lazy {
+public val MediumDateFormatter by lazy {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
     } else {

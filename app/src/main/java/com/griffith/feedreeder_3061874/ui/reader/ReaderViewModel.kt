@@ -16,16 +16,19 @@ import com.griffith.feedreeder_3061874.data.FeedStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.OffsetDateTime
 
 data class ReaderUiState(
     val title: String = "",
     val subTitle: String = "",
+    val contentUri: String = "",
     val duration: Duration? = null,
     val feedName: String = "",
     val author: String = "",
     val summary: String = "",
     val podcastImageUrl: String = "",
-    val content: String? = null
+    val content: String? = null,
+    val publishedDate: OffsetDateTime? = null,
 )
 
 
@@ -47,9 +50,11 @@ class ReaderViewModel (
                 title = episode.title,
                 duration = episode.duration,
                 feedName = feed.title,
+                contentUri = episode.uri,
                 summary = episode.summary ?: "",
                 podcastImageUrl = feed.imageUrl ?: "",
-                content = episode.content
+                content = episode.content,
+                publishedDate = episode.published
             )
         }
     }
