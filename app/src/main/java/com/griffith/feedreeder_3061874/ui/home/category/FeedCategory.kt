@@ -28,15 +28,15 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PlaylistAdd
+import androidx.compose.material.icons.filled.ReadMore
 import androidx.compose.material.icons.rounded.AutoStories
-import androidx.compose.material.icons.rounded.PlayCircleFilled
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -64,11 +64,11 @@ import com.griffith.feedreeder_3061874.data.EpisodeToFeed
 import com.griffith.feedreeder_3061874.data.FeedCollection
 import com.griffith.feedreeder_3061874.data.FeedsExtraInfo
 import com.griffith.feedreeder_3061874.helper.viewModelProviderFactoryOf
-import com.griffith.feedreeder_3061874.ui.theme.keyline1
 import com.griffith.feedreeder_3061874.ui.components.ToggleFollowFeedsIconButton
 import com.griffith.feedreeder_3061874.ui.home.PreviewEpisodes
 import com.griffith.feedreeder_3061874.ui.home.PreviewPodcasts
 import com.griffith.feedreeder_3061874.ui.theme.Feedreeder_3061874Theme
+import com.griffith.feedreeder_3061874.ui.theme.keyline1
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -87,10 +87,11 @@ fun FeedCategory(
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     Column(modifier = modifier) {
-        CategoryFeeds(viewState.topFeeds, viewModel)
+//        CategoryFeeds(viewState.topFeeds, viewModel)
         EpisodeList(viewState.episode, navigateToReader)
     }
 }
+
 @Composable
 fun CategoryFeeds(topFeeds: List<FeedsExtraInfo>, viewModel: FeedCategoryViewModel) {
     CategoryFeedsRow(
@@ -99,6 +100,7 @@ fun CategoryFeeds(topFeeds: List<FeedsExtraInfo>, viewModel: FeedCategoryViewMod
         modifier = Modifier.fillMaxWidth()
     )
 }
+
 @Composable
 fun CategoryFeedsRow(
     feeds: List<FeedsExtraInfo>,
@@ -122,6 +124,7 @@ fun CategoryFeedsRow(
         }
     }
 }
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EpisodeList(
@@ -142,7 +145,6 @@ fun EpisodeList(
         }
     }
 }
-
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -184,7 +186,6 @@ fun EpisodeListItem(
                 },
         )
 
-
         Text(
             text = episode.title,
             maxLines = 2,
@@ -225,25 +226,25 @@ fun EpisodeListItem(
                 }
             )
 
-            Image(
-                imageVector = Icons.Rounded.AutoStories,
-                contentDescription = stringResource(R.string.cd_read),
-                contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(LocalContentColor.current),
-                modifier = Modifier
+            IconButton(
+                onClick = { /* TODO */ },
+                modifier =  Modifier
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false, radius = 24.dp)
                     ) { /* TODO */ }
-                    .size(32.dp)
-                    .padding(6.dp)
-                    .semantics { role = Role.Button }
-                    .constrainAs(playIcon) {
-                        start.linkTo(parent.start, keyline1)
-                        top.linkTo(titleImageBarrier, margin = 10.dp)
-                        bottom.linkTo(parent.bottom, 10.dp)
-                    }
-            )
+                 .constrainAs(playIcon) {
+                    start.linkTo(parent.start, keyline1)
+                    top.linkTo(titleImageBarrier, margin = 10.dp)
+                    bottom.linkTo(parent.bottom, 10.dp)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AutoStories,
+                    contentDescription = stringResource(R.string.cd_more)
+                )
+
+            }
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
@@ -310,55 +311,55 @@ fun EpisodeListItem(
 
 }
 
-    @Composable
-    fun TopFeedRowItem(
-        feedTitle: String,
-        feedImageUrl: String?,
-        isFollowed: Boolean,
-        onToggleFollowClicked: () -> Unit,
-        modifier: Modifier
+@Composable
+fun TopFeedRowItem(
+    feedTitle: String,
+    feedImageUrl: String?,
+    isFollowed: Boolean,
+    onToggleFollowClicked: () -> Unit,
+    modifier: Modifier
+) {
+    Column(
+        modifier.semantics(mergeDescendants = true) {}
     ) {
-        Column(
-            modifier.semantics(mergeDescendants = true) {}
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .align(Alignment.CenterHorizontally)
         ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                if (feedImageUrl != null) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(feedImageUrl)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(MaterialTheme.shapes.medium)
-                    )
-                }
-                ToggleFollowFeedsIconButton(
-                    onClick = onToggleFollowClicked,
-                    isFollowed = isFollowed,
-                    modifier = Modifier.align(Alignment.BottomEnd)
+            if (feedImageUrl != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(feedImageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(MaterialTheme.shapes.medium)
                 )
             }
-            Text(
-                text = feedTitle,
-                style = MaterialTheme.typography.body2,
-                maxLines = 2,
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .fillMaxWidth()
+            ToggleFollowFeedsIconButton(
+                onClick = onToggleFollowClicked,
+                isFollowed = isFollowed,
+                modifier = Modifier.align(Alignment.BottomEnd)
             )
         }
+        Text(
+            text = feedTitle,
+            style = MaterialTheme.typography.body2,
+            maxLines = 2,
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth()
+        )
     }
+}
 
 
-public val MediumDateFormatter by lazy {
+val MediumDateFormatter by lazy {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
     } else {

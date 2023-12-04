@@ -31,7 +31,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.PlaylistAdd
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
@@ -53,8 +53,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.window.layout.DisplayFeature
 import com.griffith.feedreeder_3061874.R
 import com.griffith.feedreeder_3061874.ui.theme.verticalGradientScrim
-import org.sufficientlysecure.htmltextview.HtmlFormatter
-import org.sufficientlysecure.htmltextview.HtmlFormatterBuilder
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 import org.sufficientlysecure.htmltextview.HtmlTextView
 import org.sufficientlysecure.htmltextview.LocalLinkMovementMethod
@@ -135,7 +133,7 @@ fun HtmlRender(
 
 }
 
-fun openHtmlLink(view: View, url: String): Boolean {
+private fun openHtmlLink(view: View, url: String): Boolean {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(url)
     return try {
@@ -200,7 +198,7 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
         modifier = modifier
             .fillMaxSize()
             .verticalGradientScrim(
-                color = Color.Black,
+                color = MaterialTheme.colors.surface,
                 startYPercentage = 1f,
                 endYPercentage = 0f
             )
@@ -209,7 +207,9 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
     ) {
         TopAppBar(onBackPress = onBackPress, contentUri = uiState.contentUri)
         Column(
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             FeedDescription(
                 uiState.title,
@@ -230,11 +230,8 @@ fun FeedContent(content: String?, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .padding(horizontal = 8.dp, vertical = 12.dp)
-            .verticalScroll(rememberScrollState())
-            // make the bg color the same as the surface color
             .clip(MaterialTheme.shapes.large)
             .background(Color.Transparent)
-        // make text color white
     ) {
         content?.let { FeedContentDisplay(html = it) }
     }
@@ -309,7 +306,7 @@ private fun TopAppBar(onBackPress: () -> Unit, contentUri: String) {
         Spacer(Modifier.weight(1f))
         IconButton(onClick = { /* TODO */ }) {
             Icon(
-                imageVector = Icons.Default.PlaylistAdd,
+                imageVector = Icons.Default.BookmarkAdd,
                 contentDescription = stringResource(R.string.cd_add)
             )
         }

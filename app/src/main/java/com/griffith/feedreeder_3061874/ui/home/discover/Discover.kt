@@ -19,7 +19,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,7 +41,7 @@ fun Discover(
         Column(modifier) {
             Spacer(Modifier.height(8.dp))
             FeedCategoryTabs(
-               categories = viewState.categories,
+                categories = viewState.categories,
                 selectedCategory = selectedCategory,
                 onCategorySelected = viewModel::onCategorySelected,
                 modifier = Modifier.fillMaxWidth()
@@ -54,12 +53,13 @@ fun Discover(
                     .weight(1f), label = ""
             ) { category ->
 
-                    FeedCategory(
-                        categoryId = category.id,
-                        navigateToReader = navigateToReader,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+                FeedCategory(
+                    categoryId = category.id,
+                    navigateToReader = navigateToReader,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Spacer(Modifier.height(8.dp))
+            }
         }
     }
 }
