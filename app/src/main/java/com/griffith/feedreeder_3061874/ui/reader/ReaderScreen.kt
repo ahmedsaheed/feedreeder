@@ -36,6 +36,11 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +56,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.window.layout.DisplayFeature
+import com.griffith.feedreeder_3061874.LocalStorage
 import com.griffith.feedreeder_3061874.R
 import com.griffith.feedreeder_3061874.ui.theme.verticalGradientScrim
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
@@ -194,6 +200,17 @@ fun ReaderContent(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: Modifier) {
+    val ctx = LocalContext.current
+    val localStorage = LocalStorage(ctx)
+    val scrollState = rememberScrollState()
+    DisposableEffect(scrollState) {
+        // Dispose the observer when the composable is disposed or recomposed
+        onDispose {
+            localStorage.saveProgress(uiState.contentUri, scrollState.value.toString())
+            Log.i("ReaderScreen", "Saved progress ${scrollState.value.toString()}")
+            Log.i("ReaderScreen", "Saved progress in localStorage ${localStorage.getProgress(uiState.contentUri)}")
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -209,8 +226,10 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
         Column(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
+                .verticalScroll(scrollState)
+        )
+        {
+
             FeedDescription(
                 uiState.title,
                 uiState.publishedDate!!,
@@ -222,7 +241,10 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
                 FeedContent(uiState.content)
             }
         }
+
     }
+
+
 }
 
 @Composable
