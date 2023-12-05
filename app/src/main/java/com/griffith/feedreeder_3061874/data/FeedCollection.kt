@@ -3,8 +3,8 @@ package com.griffith.feedreeder_3061874.data
 import androidx.compose.runtime.Immutable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 
 
 @Entity(
@@ -15,7 +15,7 @@ import androidx.room.Index
 )
 
 @Immutable
-data class FeedCollection (
+data class FeedCollection(
     @PrimaryKey @ColumnInfo(name = "uri") val uri: String,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "description") val description: String? = null,

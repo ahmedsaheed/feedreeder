@@ -20,6 +20,7 @@ import com.griffith.feedreeder_3061874.ui.theme.Feedreeder_3061874Theme
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private var sensorManager: SensorManager? = null
     private var light: Sensor? = null
+
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +41,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        sensorManager!!.registerListener(this, sensorManager!!.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager!!.registerListener(
+            this,
+            sensorManager!!.getDefaultSensor(Sensor.TYPE_LIGHT),
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 
     override fun onPause() {
@@ -50,25 +55,27 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if(event!!.sensor.type == Sensor.TYPE_LIGHT){
+        if (event!!.sensor.type == Sensor.TYPE_LIGHT) {
             getLightSensor(event)
         }
     }
 
     private fun getLightSensor(event: SensorEvent) {
-        Log.w("LightFromSensor", "Light: ${event.values[0].toString()}")
+        Log.w("LightFromSensor", "Light: ${event.values[0]}")
         var grayShade = event.values[0].toInt()
         if (grayShade > 255) grayShade = 255
 
         if (grayShade < 10) {
-            Toast.makeText(this, "It's too dark here! Increasing brightness", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "It's too dark here! Increasing brightness", Toast.LENGTH_SHORT)
+                .show()
             val layoutParams = window.attributes
             layoutParams.screenBrightness = 1f
             window.attributes = layoutParams
         }
 
         if (grayShade > 200) {
-            Toast.makeText(this, "It's too bright here! Decreasing brightness", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "It's too bright here! Decreasing brightness", Toast.LENGTH_SHORT)
+                .show()
             val layoutParams = window.attributes
             layoutParams.screenBrightness = 0.1f
             window.attributes = layoutParams

@@ -55,7 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -65,15 +65,13 @@ import com.griffith.feedreeder_3061874.data.FeedsExtraInfo
 import com.griffith.feedreeder_3061874.ui.components.DynamicThemePrimaryColorsFromImage
 import com.griffith.feedreeder_3061874.ui.components.rememberDominantColorState
 import com.griffith.feedreeder_3061874.ui.home.discover.Discover
+import com.griffith.feedreeder_3061874.ui.theme.Feedreeder_3061874Theme
 import com.griffith.feedreeder_3061874.ui.theme.MinContrastOfPrimaryVsSurface
 import com.griffith.feedreeder_3061874.ui.theme.contrastAgainst
 import com.griffith.feedreeder_3061874.ui.theme.keyline1
+import com.griffith.feedreeder_3061874.ui.theme.quantityStringResource
 import com.griffith.feedreeder_3061874.ui.theme.verticalGradientScrim
 import kotlinx.collections.immutable.PersistentList
-import androidx.compose.material.Text
-import androidx.compose.ui.tooling.preview.Preview
-import com.griffith.feedreeder_3061874.ui.theme.Feedreeder_3061874Theme
-import com.griffith.feedreeder_3061874.ui.theme.quantityStringResource
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -139,45 +137,45 @@ fun HomeContent(
                 }
             }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalGradientScrim(
-                    color = MaterialTheme.colors.primary.copy(alpha = 0.38f),
-                    startYPercentage = 1f,
-                    endYPercentage = 0f
-                )
-        ) {
-            Surface(
-                Modifier
-                    .background(appBarColor)
+            Column(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .windowInsetsTopHeight(WindowInsets.statusBars)
+                    .verticalGradientScrim(
+                        color = MaterialTheme.colors.primary.copy(alpha = 0.38f),
+                        startYPercentage = 1f,
+                        endYPercentage = 0f
+                    )
             ) {
-                HomeAppBar(
-                    backgroundColor = appBarColor,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                if (featuredFeeds.isNotEmpty()) {
-                    Spacer(Modifier.height(16.dp))
-
-                    FollowedFeeds(
-                        items = featuredFeeds,
-                        pagerState = pagerState,
-                        onFeedUnfollowed = onFeedUnfollowed,
-                        modifier = Modifier
-                            .padding(start = keyline1, top = 16.dp, end = keyline1)
-                            .fillMaxWidth()
-                            .height(200.dp)
+                Surface(
+                    Modifier
+                        .background(appBarColor)
+                        .fillMaxWidth()
+                        .windowInsetsTopHeight(WindowInsets.statusBars)
+                ) {
+                    HomeAppBar(
+                        backgroundColor = appBarColor,
+                        modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    if (featuredFeeds.isNotEmpty()) {
+                        Spacer(Modifier.height(16.dp))
+
+                        FollowedFeeds(
+                            items = featuredFeeds,
+                            pagerState = pagerState,
+                            onFeedUnfollowed = onFeedUnfollowed,
+                            modifier = Modifier
+                                .padding(start = keyline1, top = 16.dp, end = keyline1)
+                                .fillMaxWidth()
+                                .height(200.dp)
+                        )
+
+                        Spacer(Modifier.height(16.dp))
+                    }
                 }
             }
         }
-    }
-        if (isRefreshing){
+        if (isRefreshing) {
             // TODO show a progress indicator loader
         }
 
@@ -193,10 +191,13 @@ fun HomeContent(
             HomeCategory.Library -> {
                 //TODO
             }
+
             HomeCategory.Discover -> {
-                Discover(navigateToReader = navigateToReader, modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f))
+                Discover(
+                    navigateToReader = navigateToReader, modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
             }
         }
 
@@ -216,8 +217,8 @@ fun FollowedFeeds(
     HorizontalPager(
         state = pagerState,
         modifier = modifier
-    ) {page ->
-       val (feed, lastEpisodeDate) = items[page]
+    ) { page ->
+        val (feed, lastEpisodeDate) = items[page]
         FollowedFeedCarouselItem(
             feedImageUrl = feed.imageUrl,
             feedTitle = feed.title,
@@ -318,7 +319,12 @@ fun HomeCategoryTabIndicator(
 
 
 @Composable
-fun HomeCategoryTabs(categories: List<HomeCategory>, selectedCategory: HomeCategory, onCategorySelected: (HomeCategory) -> Unit,     modifier: Modifier = Modifier) {
+fun HomeCategoryTabs(
+    categories: List<HomeCategory>,
+    selectedCategory: HomeCategory,
+    onCategorySelected: (HomeCategory) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val selectedIndex = categories.indexOfFirst { it == selectedCategory }
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         HomeCategoryTabIndicator(
@@ -329,8 +335,8 @@ fun HomeCategoryTabs(categories: List<HomeCategory>, selectedCategory: HomeCateg
     TabRow(
         selectedTabIndex = selectedIndex,
         indicator = indicator,
-        modifier  = modifier
-        ) {
+        modifier = modifier
+    ) {
         categories.forEachIndexed { index, category ->
             Tab(
                 selected = index == selectedIndex,

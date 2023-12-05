@@ -32,7 +32,7 @@ data class ReaderUiState(
 )
 
 
-class ReaderViewModel (
+class ReaderViewModel(
     episodeStore: EpisodeStore,
     feedStore: FeedStore,
     savedStateHandle: SavedStateHandle

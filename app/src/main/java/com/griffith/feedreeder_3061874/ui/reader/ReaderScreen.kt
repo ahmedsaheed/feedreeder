@@ -37,10 +37,7 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -203,14 +200,33 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
     val ctx = LocalContext.current
     val localStorage = LocalStorage(ctx)
     val scrollState = rememberScrollState()
+
+    val storedScrollPosition = localStorage.getProgress(uiState.contentUri)?.toIntOrNull()
+    val scrollMaxValue = scrollState.maxValue
+    val initialProgressPercentage = storedScrollPosition?.toFloat()?.div(scrollMaxValue) ?: 0f
+    Log.i("ReaderScreen", "Scroll max value $scrollMaxValue")
+    // If a stored position exists, set the initial scroll position
+    storedScrollPosition?.let {
+        LaunchedEffect(it) {
+            // Scroll to the stored position using animateScrollTo
+            scrollState.animateScrollTo(it)
+        }
+    }
+
+
     DisposableEffect(scrollState) {
         // Dispose the observer when the composable is disposed or recomposed
         onDispose {
             localStorage.saveProgress(uiState.contentUri, scrollState.value.toString())
-            Log.i("ReaderScreen", "Saved progress ${scrollState.value.toString()}")
-            Log.i("ReaderScreen", "Saved progress in localStorage ${localStorage.getProgress(uiState.contentUri)}")
+            Log.i("ReaderScreen", "Saved progress ${scrollState.value}")
+            Log.i(
+                "ReaderScreen",
+                "Saved progress in localStorage ${localStorage.getProgress(uiState.contentUri)}"
+            )
         }
     }
+    val progressPercentage = (scrollState.value.toFloat() / scrollMaxValue)
+    Log.i("ReaderScreen", "Progress percentage $progressPercentage")
     Column(
         modifier = modifier
             .fillMaxSize()

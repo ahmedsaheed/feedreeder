@@ -9,7 +9,6 @@ import com.griffith.feedreeder_3061874.data.FeedStore
 import com.griffith.feedreeder_3061874.data.FeedsExtraInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -22,6 +21,7 @@ class FeedCategoryViewModel(
 
     val state: StateFlow<FeedCategoryViewState>
         get() = _state
+
     init {
         viewModelScope.launch {
             val recentFeedFlow = categoryStore.feedInCategorySortedByFeedCount(
@@ -39,7 +39,7 @@ class FeedCategoryViewModel(
                     topFeeds = topFeeds,
                     episode = episodes
                 )
-            }.collect{ _state.value = it }
+            }.collect { _state.value = it }
         }
     }
 
@@ -52,6 +52,6 @@ class FeedCategoryViewModel(
 }
 
 data class FeedCategoryViewState(
-    val topFeeds : List<FeedsExtraInfo> = emptyList(),
+    val topFeeds: List<FeedsExtraInfo> = emptyList(),
     val episode: List<EpisodeToFeed> = emptyList()
 )

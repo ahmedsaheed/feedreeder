@@ -29,18 +29,21 @@ object DateTimeTypeConverters {
     fun toLocalDateTime(value: String?): LocalDateTime? {
         return value?.let { LocalDateTime.parse(value) }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
     @JvmStatic
     fun fromLocalDateTime(value: LocalDateTime?): String? {
         return value?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
     @JvmStatic
     fun toDuration(value: Long?): Duration? {
         return value?.let { Duration.ofMillis(it) }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
     @JvmStatic

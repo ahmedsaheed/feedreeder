@@ -28,8 +28,8 @@ class FeedRepository(
             refreshingJob?.join()
         } else if (force || feedStore.isEmpty()) {
             refreshingJob = scope.launch {
-               feedFetcher(SampleFeeds)
-                   .filter { it is FeedRssResponse.Success }
+                feedFetcher(SampleFeeds)
+                    .filter { it is FeedRssResponse.Success }
                     .map { it as FeedRssResponse.Success }
                     .collect { (feed, episodes, categories) ->
                         Log.w("FeedRepository", "Successful feeds after check: $feed")

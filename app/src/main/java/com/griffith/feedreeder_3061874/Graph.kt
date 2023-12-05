@@ -21,7 +21,7 @@ object Graph {
     lateinit var okHttpClient: OkHttpClient
     lateinit var db: FeedreederDatabase
         private set
-    private val transactionRunner : TransactionRunner
+    private val transactionRunner: TransactionRunner
         get() = db.transactionRunnerDao()
 
     private val syndFeedInput by lazy { SyndFeedInput() }
@@ -39,11 +39,11 @@ object Graph {
     }
 
     private val feedFetcher by lazy {
-            FeedFetcher(
-                okHttpClient = okHttpClient,
-                syndFeedInput = syndFeedInput,
-                ioDispatcher = ioDispatcher
-            )
+        FeedFetcher(
+            okHttpClient = okHttpClient,
+            syndFeedInput = syndFeedInput,
+            ioDispatcher = ioDispatcher
+        )
     }
 
 

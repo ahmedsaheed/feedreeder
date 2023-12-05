@@ -2,13 +2,12 @@ package com.griffith.feedreeder_3061874.ui.home.discover
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.griffith.feedreeder_3061874.Graph
 import com.griffith.feedreeder_3061874.data.Category
 import com.griffith.feedreeder_3061874.data.CategoryStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -35,12 +34,13 @@ class DiscoverViewModel(
                 _selectedCategory
             ) { categories, selectedCategories ->
                 DiscoverViewState(
-                    categories  = categories,
+                    categories = categories,
                     selectedCategory = selectedCategories
                 )
-            }.collect{ _state.value = it}
+            }.collect { _state.value = it }
         }
     }
+
     fun onCategorySelected(category: Category) {
         _selectedCategory.value = category
     }

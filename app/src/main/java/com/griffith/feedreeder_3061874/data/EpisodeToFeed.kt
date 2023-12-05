@@ -9,6 +9,7 @@ class EpisodeToFeed {
 
     @Embedded
     lateinit var episode: Episode
+
     @Relation(parentColumn = "episode_uri", entityColumn = "uri")
     lateinit var _feed: List<FeedCollection>
 

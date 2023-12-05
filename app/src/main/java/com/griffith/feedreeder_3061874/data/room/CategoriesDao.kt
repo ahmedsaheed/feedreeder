@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.griffith.feedreeder_3061874.data.Category
 import kotlinx.coroutines.flow.Flow
+
 @Dao
 abstract class CategoriesDao : BaseDao<Category> {
     @Query(
@@ -19,9 +20,9 @@ abstract class CategoriesDao : BaseDao<Category> {
     )
 
     abstract fun categoriesSortedByFeedCount(
-        limit : Int
-    ) : Flow<List<Category>>
+        limit: Int
+    ): Flow<List<Category>>
 
     @Query("SELECT * FROM categories WHERE name = :name")
-    abstract suspend fun getCategoryWithName(name : String) : Category?
+    abstract suspend fun getCategoryWithName(name: String): Category?
 }

@@ -13,7 +13,7 @@ class FeedsExtraInfo {
     var lastEpisodeDate: OffsetDateTime? = null
 
     @ColumnInfo(name = "is_followed")
-    var isFollowed =  false
+    var isFollowed = false
 
     operator fun component1() = feed
     operator fun component2() = lastEpisodeDate
@@ -26,6 +26,7 @@ class FeedsExtraInfo {
                     lastEpisodeDate == other.lastEpisodeDate &&
                     isFollowed == other.isFollowed
         }
+
         else -> false
     }
 

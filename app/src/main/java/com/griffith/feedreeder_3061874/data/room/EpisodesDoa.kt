@@ -6,14 +6,15 @@ import androidx.room.Transaction
 import com.griffith.feedreeder_3061874.data.Episode
 import com.griffith.feedreeder_3061874.data.EpisodeToFeed
 import kotlinx.coroutines.flow.Flow
+
 @Dao
-abstract  class EpisodesDoa : BaseDao<Episode> {
+abstract class EpisodesDoa : BaseDao<Episode> {
     @Query(
         """
             SELECT * FROM episodes WHERE uri = :uri
         """
     )
-    abstract fun episode(uri: String) : Flow<Episode>
+    abstract fun episode(uri: String): Flow<Episode>
 
     @Query(
         """
@@ -25,7 +26,7 @@ abstract  class EpisodesDoa : BaseDao<Episode> {
     abstract fun episodesFromFeedUri(
         feedUri: String,
         limit: Int
-    ) : Flow<List<Episode>>
+    ): Flow<List<Episode>>
 
     @Transaction
     @Query(
@@ -37,11 +38,11 @@ abstract  class EpisodesDoa : BaseDao<Episode> {
             LIMIT :limit
         """
     )
-    abstract  fun episodesFromFeedInCategory(
-        categoryId : Long,
-        limit : Int
-    ) : Flow<List<EpisodeToFeed>>
+    abstract fun episodesFromFeedInCategory(
+        categoryId: Long,
+        limit: Int
+    ): Flow<List<EpisodeToFeed>>
 
     @Query("SELECT COUNT(*) FROM episodes")
-    abstract suspend fun count() : Int
+    abstract suspend fun count(): Int
 }

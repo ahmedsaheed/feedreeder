@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -33,10 +32,11 @@ fun rememberFeedReederAppState(
 ) = remember(navController, context) {
     FeedReederAppState(navController, context)
 }
+
 class FeedReederAppState(
     val navController: NavHostController,
     private val context: Context
-){
+) {
     var isOnline by mutableStateOf(checkIfOnline())
         private set
 
@@ -44,10 +44,12 @@ class FeedReederAppState(
         isOnline = checkIfOnline()
     }
 
-    fun navigateBack() { navController.popBackStack() }
+    fun navigateBack() {
+        navController.popBackStack()
+    }
 
 
-        private fun checkIfOnline(): Boolean {
+    private fun checkIfOnline(): Boolean {
         val cm = getSystemService(context, ConnectivityManager::class.java)
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

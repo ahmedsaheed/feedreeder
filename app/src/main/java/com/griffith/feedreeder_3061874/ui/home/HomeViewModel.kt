@@ -40,13 +40,17 @@ class HomeViewModel(
                 refreshing
             ) { categories, selectedCategories, feeds, refreshing ->
 
-                Log.w("HomeViewModel", "HomeViewState: ${HomeViewState(
-                    homeCategories = categories,
-                    selectedHomeCategory = selectedCategories,
-                    featuredFeeds = feeds.toPersistentList(),
-                    refreshing = refreshing,
-                    errorMessage = null /*TODO*/
-                )}")
+                Log.w(
+                    "HomeViewModel", "HomeViewState: ${
+                        HomeViewState(
+                            homeCategories = categories,
+                            selectedHomeCategory = selectedCategories,
+                            featuredFeeds = feeds.toPersistentList(),
+                            refreshing = refreshing,
+                            errorMessage = null /*TODO*/
+                        )
+                    }"
+                )
                 HomeViewState(
                     homeCategories = categories,
                     selectedHomeCategory = selectedCategories,
@@ -61,7 +65,7 @@ class HomeViewModel(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun refresh(force : Boolean) {
+    private fun refresh(force: Boolean) {
         viewModelScope.launch {
             kotlin.runCatching {
                 refreshing.value = true
@@ -76,14 +80,12 @@ class HomeViewModel(
         selectedCategory.value = category
     }
 
-    fun onFeedUnFollowed(feedUri : String) {
+    fun onFeedUnFollowed(feedUri: String) {
         viewModelScope.launch {
             feedStore.unfollowedFeed(feedUri)
         }
     }
 }
-
-
 
 
 enum class HomeCategory {

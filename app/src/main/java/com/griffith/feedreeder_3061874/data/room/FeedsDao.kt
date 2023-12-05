@@ -8,7 +8,7 @@ import com.griffith.feedreeder_3061874.data.FeedsExtraInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class FeedsDao: BaseDao<FeedCollection> {
+abstract class FeedsDao : BaseDao<FeedCollection> {
     @Query("SELECT * FROM feeds WHERE uri = :uri")
     abstract fun feedWithUri(uri: String): Flow<FeedCollection>
 
@@ -31,7 +31,7 @@ abstract class FeedsDao: BaseDao<FeedCollection> {
 
     abstract fun feedsSortedByLastEpisode(
         limit: Int
-    ) : Flow<List<FeedsExtraInfo>>
+    ): Flow<List<FeedsExtraInfo>>
 
     @Transaction
     @Query(
@@ -59,7 +59,7 @@ abstract class FeedsDao: BaseDao<FeedCollection> {
 
     @Transaction
     @Query(
-    """
+        """
         SELECT feeds.*, last_episode_date, (followed_entries.feed_uri IS NOT NULL) AS  is_followed
         FROM feeds
         INNER JOIN (
@@ -73,9 +73,9 @@ abstract class FeedsDao: BaseDao<FeedCollection> {
     )
 
     abstract fun followedFeedsSortedByLastEpisode(
-        limit : Int
-    ) : Flow<List<FeedsExtraInfo>>
+        limit: Int
+    ): Flow<List<FeedsExtraInfo>>
 
-   @Query("SELECT COUNT(*) FROM feeds")
-   abstract suspend fun count() : Int
+    @Query("SELECT COUNT(*) FROM feeds")
+    abstract suspend fun count(): Int
 }

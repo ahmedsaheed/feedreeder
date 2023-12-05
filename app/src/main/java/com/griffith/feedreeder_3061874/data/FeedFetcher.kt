@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import coil.network.HttpException
 import com.rometools.modules.cc.CreativeCommons
 import com.rometools.modules.itunes.EntryInformation
-import com.rometools.rome.feed.synd.SyndCategory
 import com.rometools.rome.feed.synd.SyndEntry
 import com.rometools.rome.feed.synd.SyndFeed
 import com.rometools.rome.io.SyndFeedInput
@@ -34,6 +33,7 @@ class FeedFetcher(
     private val cacheControl by lazy {
         CacheControl.Builder().maxStale(8, TimeUnit.HOURS).build()
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(feedUrls: List<String>): Flow<FeedRssResponse> {
@@ -66,7 +66,7 @@ class FeedFetcher(
 }
 
 fun feedIcon(link: String): String = "https://icon.horse/icon/${URL(link).host!!}"
-private fun toCategories(name : String): List<Category> =
+private fun toCategories(name: String): List<Category> =
     listOf(Category(name = name))
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -115,6 +115,7 @@ sealed class FeedRssResponse {
     data class Error(
         val throwable: Throwable?,
     ) : FeedRssResponse()
+
     data class Success(
         val podcast: FeedCollection,
         val episodes: List<Episode>,

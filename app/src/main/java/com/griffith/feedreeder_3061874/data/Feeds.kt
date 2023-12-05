@@ -9,4 +9,4 @@ val SampleFeeds = listOf<String>(
     "https://100r.co/links/rss.xml",
     "https://matklad.github.io/feed.xml",
     "https://thesephist.com/index.xml",
-    )
+)

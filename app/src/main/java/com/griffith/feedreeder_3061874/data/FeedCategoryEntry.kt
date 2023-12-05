@@ -34,8 +34,8 @@ import androidx.room.PrimaryKey
 )
 
 @Immutable
-data class FeedCategoryEntry (
+data class FeedCategoryEntry(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
-    @ColumnInfo(name = "feed_uri") val feedUri : String,
+    @ColumnInfo(name = "feed_uri") val feedUri: String,
     @ColumnInfo(name = "category_id") val categoryId: Long
 )

@@ -15,7 +15,11 @@ class ReaderActivity : Activity(), SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        sensorManager!!.registerListener(this, sensorManager!!.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager!!.registerListener(
+            this,
+            sensorManager!!.getDefaultSensor(Sensor.TYPE_LIGHT),
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 
     override fun onPause() {
@@ -25,13 +29,13 @@ class ReaderActivity : Activity(), SensorEventListener {
 
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if(event!!.sensor.type == Sensor.TYPE_LIGHT){
+        if (event!!.sensor.type == Sensor.TYPE_LIGHT) {
             getLightSensor(event)
         }
     }
 
     private fun getLightSensor(event: SensorEvent) {
-        Log.w("LightFromSensor", "Light: ${event.values[0].toString()}")
+        Log.w("LightFromSensor", "Light: ${event.values[0]}")
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) =

@@ -2,7 +2,6 @@ package com.griffith.feedreeder_3061874.data.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.griffith.feedreeder_3061874.data.Category
 import com.griffith.feedreeder_3061874.data.Episode
@@ -23,10 +22,10 @@ import com.griffith.feedreeder_3061874.data.FeedFollowedEntry
 )
 @TypeConverters(DateTimeTypeConverters::class)
 abstract class FeedreederDatabase : RoomDatabase() {
-    abstract fun feedsDao() : FeedsDao
+    abstract fun feedsDao(): FeedsDao
     abstract fun episodesDao(): EpisodesDoa
     abstract fun categoriesDao(): CategoriesDao
-    abstract fun feedCategoryEntryDao() : FeedCategoryEntryDao
+    abstract fun feedCategoryEntryDao(): FeedCategoryEntryDao
     abstract fun transactionRunnerDao(): TransactionRunnerDao
     abstract fun feedFollowedEntryDao(): FeedFollowedEntryDao
 }
