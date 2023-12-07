@@ -50,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.griffith.feedreeder_3061874.LocalStorage
 import com.griffith.feedreeder_3061874.R
 import com.griffith.feedreeder_3061874.data.Episode
 import com.griffith.feedreeder_3061874.data.EpisodeToFeed
@@ -147,6 +148,8 @@ fun EpisodeListItem(
     onClick: (String) -> Unit,
     modifier: Modifier
 ) {
+    val ctx = LocalContext.current
+    val localStorage = LocalStorage(ctx)
     ConstraintLayout(modifier = modifier.clickable { onClick(episode.uri) }) {
 
         val (
@@ -239,6 +242,8 @@ fun EpisodeListItem(
             }
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+
+                val progress = localStorage.getReadingProgress(episode.uri)
                 Text(
                     text = when {
                         episode.duration != null -> {
@@ -250,7 +255,11 @@ fun EpisodeListItem(
                             )
                         }
                         // Otherwise we just use the date
-                        else -> MediumDateFormatter.format(episode.published)
+                        else -> if (progress != null) {
+                            MediumDateFormatter.format(episode.published) + " • " + progress + "% read"
+                        } else {
+                            MediumDateFormatter.format(episode.published)
+                        }
                     },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

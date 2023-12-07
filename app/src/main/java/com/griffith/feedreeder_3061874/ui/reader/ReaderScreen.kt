@@ -1,5 +1,6 @@
 package com.griffith.feedreeder_3061874.ui.reader
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -60,6 +61,7 @@ import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 import org.sufficientlysecure.htmltextview.HtmlTextView
 import org.sufficientlysecure.htmltextview.LocalLinkMovementMethod
 import org.sufficientlysecure.htmltextview.OnClickATagListener
+import java.math.RoundingMode
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -201,15 +203,14 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
     val localStorage = LocalStorage(ctx)
     val scrollState = rememberScrollState()
 
-    val storedScrollPosition = localStorage.getProgress(uiState.contentUri)?.toIntOrNull()
+    val storedScrollPosition = localStorage.getScrollProgress(uiState.contentUri)?.toIntOrNull()
     val scrollMaxValue = scrollState.maxValue
-    val initialProgressPercentage = storedScrollPosition?.toFloat()?.div(scrollMaxValue) ?: 0f
     Log.i("ReaderScreen", "Scroll max value $scrollMaxValue")
     // If a stored position exists, set the initial scroll position
     storedScrollPosition?.let {
         LaunchedEffect(it) {
             // Scroll to the stored position using animateScrollTo
-            scrollState.animateScrollTo(it)
+//            scrollState.animateScrollTo(it)
         }
     }
 
@@ -217,16 +218,18 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
     DisposableEffect(scrollState) {
         // Dispose the observer when the composable is disposed or recomposed
         onDispose {
-            localStorage.saveProgress(uiState.contentUri, scrollState.value.toString())
+            localStorage.saveScrollProgress(uiState.contentUri, scrollState.value.toString())
             Log.i("ReaderScreen", "Saved progress ${scrollState.value}")
             Log.i(
                 "ReaderScreen",
-                "Saved progress in localStorage ${localStorage.getProgress(uiState.contentUri)}"
+                "Saved progress in localStorage ${localStorage.getScrollProgress(uiState.contentUri)}"
             )
+
         }
     }
-    val progressPercentage = (scrollState.value.toFloat() / scrollMaxValue)
-    Log.i("ReaderScreen", "Progress percentage $progressPercentage")
+    val readingPercentage = (scrollState.value.toFloat() / scrollMaxValue) * 100
+    updateReadingProgress(ctx, uiState.contentUri, readingPercentage)
+    Log.i("ReaderScreen", "Progress percentage ${readingPercentage.toBigDecimal().setScale(0, RoundingMode.HALF_EVEN)}")
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -258,6 +261,22 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
             }
         }
 
+    }
+
+
+}
+
+
+private fun updateReadingProgress(ctx: Context, url: String, progress: Float) {
+    // get the current reading progress
+    val localStorage = LocalStorage(ctx)
+    val storedProgress = localStorage.getReadingProgress(url)?.toFloatOrNull() ?: 0f
+    // if the current progress is greater than the stored progress, update the stored progress
+    if (progress > storedProgress) {
+        // make the progress without decimal places
+
+        val toBeStored = progress.toBigDecimal().setScale(0, RoundingMode.HALF_EVEN).toString()
+        localStorage.setReadingProgress(url, toBeStored)
     }
 
 
