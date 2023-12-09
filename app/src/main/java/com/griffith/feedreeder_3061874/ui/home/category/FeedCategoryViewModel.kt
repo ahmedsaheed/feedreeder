@@ -43,7 +43,7 @@ class FeedCategoryViewModel(
         }
     }
 
-    fun onTogglePodcastFollowed(feedUri: String) {
+    fun onToggleFeedFollowed(feedUri: String) {
         viewModelScope.launch {
             feedStore.toggleFeedFollowed(feedUri)
         }

@@ -44,6 +44,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -146,12 +147,12 @@ fun HomeContent(
                         endYPercentage = 0f
                     )
             ) {
-                Surface(
+                Spacer(
                     Modifier
                         .background(appBarColor)
                         .fillMaxWidth()
                         .windowInsetsTopHeight(WindowInsets.statusBars)
-                ) {
+                )
                     HomeAppBar(
                         backgroundColor = appBarColor,
                         modifier = Modifier.fillMaxWidth()
@@ -172,7 +173,7 @@ fun HomeContent(
 
                         Spacer(Modifier.height(16.dp))
                     }
-                }
+
             }
         }
         if (isRefreshing) {
@@ -289,7 +290,6 @@ fun FollowedFeedCarouselItem(
                     text = lastEpisodeDateText,
                     style = MaterialTheme.typography.caption,
                     maxLines = 1,
-//                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .align(Alignment.CenterHorizontally)

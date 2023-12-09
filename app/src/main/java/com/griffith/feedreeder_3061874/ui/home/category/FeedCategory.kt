@@ -89,7 +89,7 @@ fun FeedCategory(
 fun CategoryFeeds(topFeeds: List<FeedsExtraInfo>, viewModel: FeedCategoryViewModel) {
     CategoryFeedsRow(
         feeds = topFeeds,
-        onToggleFeedFollowed = viewModel::onTogglePodcastFollowed,
+        onToggleFeedFollowed = viewModel::onToggleFeedFollowed,
         modifier = Modifier.fillMaxWidth()
     )
 }
