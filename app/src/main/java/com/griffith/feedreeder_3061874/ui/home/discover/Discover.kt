@@ -12,12 +12,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Surface
 import androidx.compose.material.Tab
 import androidx.compose.material.TabPosition
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +61,7 @@ fun Discover(
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+    var addNewFeedText by remember { mutableStateOf("") }
 
     val selectedCategory = viewState.selectedCategory
     Log.w("Discover", "Discover: ${viewState.categories} $selectedCategory")
@@ -66,19 +72,48 @@ fun Discover(
                     onDismissRequest = { showBottomSheet = false },
                     sheetState = sheetState,
                     containerColor = MaterialTheme.colors.surface,
-
-
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp)
+                            .height(150.dp)
                             .background(MaterialTheme.colors.surface)
                     ) {
+
                         Text(
-                            text = "Bottom Sheet",
-                            modifier = Modifier.align(Alignment.Center)
+                            text = "Subscribe",
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.align(Alignment.TopStart)
+                                .padding(start = 16.dp)
                         )
+
+                        TextField(
+                            value = addNewFeedText,
+                            onValueChange = { addNewFeedText = it },
+                            label = { Text("Feed or Site URL") },
+                            modifier = Modifier.align(Alignment.CenterStart)
+                                .fillMaxWidth()
+                                .padding(start = 16.dp),
+                            keyboardOptions = KeyboardOptions(
+                                autoCorrect = false,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    showBottomSheet = false
+                                }
+                            )
+                        )
+                        Button(
+                            onClick = {
+                                showBottomSheet = false
+                            },
+                            enabled = addNewFeedText.isNotEmpty(),
+                            modifier = Modifier.align(Alignment.BottomEnd)
+                        ) {
+                            Text("Add")
+                        }
+
                     }
                 }
             }
@@ -185,7 +220,7 @@ fun AddFeedFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
                     .align(alignment = Alignment.BottomEnd),
                 onClick = { onClick() },
                 containerColor = MaterialTheme.colors.primary.copy(alpha = 0.08f),
-                contentColor = MaterialTheme.colors.onSurface,
+                contentColor = MaterialTheme.colors.primaryVariant,
             ) {
                 Icon(Icons.Filled.Add, "Add Feed")
             }
