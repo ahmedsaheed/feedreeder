@@ -76,7 +76,10 @@ import com.griffith.feedreeder_3061874.ui.theme.keyline1
         Column(modifier) {
             if (showBottomSheet){
                 ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet = false },
+                    onDismissRequest = {
+                        showBottomSheet = false
+                        addNewFeedText = ""
+                                       },
                     sheetState = sheetState,
                     containerColor = MaterialTheme.colors.surface,
                 ) {
