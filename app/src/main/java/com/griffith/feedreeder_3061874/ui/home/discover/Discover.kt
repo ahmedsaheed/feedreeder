@@ -1,6 +1,8 @@
 package com.griffith.feedreeder_3061874.ui.home.discover
 
 import android.os.Build
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.Crossfade
@@ -25,43 +27,48 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.griffith.feedreeder_3061874.data.Category
 import com.griffith.feedreeder_3061874.ui.home.category.FeedCategory
 import com.griffith.feedreeder_3061874.ui.theme.keyline1
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.LayoutDirection
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Discover(
+ fun Discover(
     navigateToReader: (String) -> Unit,
     modifier: Modifier
 ) {
     val viewModel: DiscoverViewModel = viewModel()
     val viewState by viewModel.state.collectAsStateWithLifecycle()
-
+    val policy = ThreadPolicy.Builder().permitAll().build()
+    StrictMode.setThreadPolicy(policy)
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var addNewFeedText by remember { mutableStateOf("") }
+    var isURLRssValid by rememberSaveable { mutableStateOf(false) }
+
+    fun validate(text: String) {
+            isURLRssValid = viewModel.validateRssUrl(text)
+        }
+
 
     val selectedCategory = viewState.selectedCategory
     Log.w("Discover", "Discover: ${viewState.categories} $selectedCategory")
@@ -76,39 +83,67 @@ fun Discover(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(150.dp)
+                            .height(160.dp)
                             .background(MaterialTheme.colors.surface)
                     ) {
 
                         Text(
                             text = "Subscribe",
                             style = MaterialTheme.typography.h5,
-                            modifier = Modifier.align(Alignment.TopStart)
-                                .padding(start = 16.dp)
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(start = 16.dp, bottom = 15.dp)
                         )
 
-                        TextField(
-                            value = addNewFeedText,
-                            onValueChange = { addNewFeedText = it },
-                            label = { Text("Feed or Site URL") },
-                            modifier = Modifier.align(Alignment.CenterStart)
-                                .fillMaxWidth()
-                                .padding(start = 16.dp),
-                            keyboardOptions = KeyboardOptions(
-                                autoCorrect = false,
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    showBottomSheet = false
-                                }
-                            )
-                        )
+                        Column(modifier = Modifier.align(
+                            Alignment.CenterStart
+
+                        )) {
+
+                            TextField(
+                                value = addNewFeedText,
+                                onValueChange = {
+                                    addNewFeedText = it
+                                    validate(addNewFeedText)
+                                },
+                                label = { Text("Feed or Site URL") },
+                                singleLine = true,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, bottom = 10.dp),
+                                keyboardOptions = KeyboardOptions(
+                                    autoCorrect = false,
+                                    imeAction = ImeAction.Done
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        showBottomSheet = false
+                                        addNewFeedText = ""
+                                    }
+                                ),
+                                isError = addNewFeedText.isNotEmpty()  && !isURLRssValid,
+
+                                )
+                            if(addNewFeedText.isNotEmpty() && !isURLRssValid) {
+                                Text(
+                                    text = "Invalid RSS URL",
+                                    style = MaterialTheme.typography.body2,
+                                    color = MaterialTheme.colors.error,
+                                    modifier = Modifier
+                                        .padding(start = 16.dp, bottom = 10.dp)
+                                )
+                            }
+                        }
+
                         Button(
                             onClick = {
                                 showBottomSheet = false
+                                val isValid = viewModel.validateRssUrl(addNewFeedText)
+                                Log.d("isValid", isValid.toString())
+                                addNewFeedText = ""
+
                             },
-                            enabled = addNewFeedText.isNotEmpty(),
+                            enabled = isURLRssValid,
                             modifier = Modifier.align(Alignment.BottomEnd)
                         ) {
                             Text("Add")

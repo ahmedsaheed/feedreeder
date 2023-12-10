@@ -6,11 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.griffith.feedreeder_3061874.Graph
 import com.griffith.feedreeder_3061874.data.Category
 import com.griffith.feedreeder_3061874.data.CategoryStore
+import com.rometools.rome.io.SyndFeedInput
+import com.rometools.rome.io.XmlReader
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.net.HttpURLConnection
+import java.net.URL
 
 class DiscoverViewModel(
     private val categoryStore: CategoryStore = Graph.categoryStore
@@ -39,6 +43,20 @@ class DiscoverViewModel(
                 )
             }.collect { _state.value = it }
         }
+    }
+
+    fun validateRssUrl(address: String?): Boolean {
+        var ok = false
+        try {
+            val url = URL(address)
+            val httpcon = url.openConnection() as HttpURLConnection
+            val input = SyndFeedInput()
+            val feed = input.build(XmlReader(url))
+            ok = true
+        } catch (exc: Exception) {
+            exc.printStackTrace()
+        }
+        return ok
     }
 
     fun onCategorySelected(category: Category) {
