@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.griffith.feedreeder_3061874.Graph
 import com.griffith.feedreeder_3061874.data.Category
 import com.griffith.feedreeder_3061874.data.CategoryStore
+import com.griffith.feedreeder_3061874.data.FeedStore
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class DiscoverViewModel(
-    private val categoryStore: CategoryStore = Graph.categoryStore
+    private val categoryStore: CategoryStore = Graph.categoryStore,
+    private val feedStore: FeedStore = Graph.feedStore,
 ) : ViewModel() {
     private val _selectedCategory = MutableStateFlow<Category?>(null)
     private val _state = MutableStateFlow(DiscoverViewState())
@@ -57,6 +59,12 @@ class DiscoverViewModel(
             exc.printStackTrace()
         }
         return ok
+    }
+
+    fun addNewFollowedFeed(feedUri: String) {
+        viewModelScope.launch {
+            feedStore.toggleFeedFollowed(feedUri)
+        }
     }
 
     fun onCategorySelected(category: Category) {

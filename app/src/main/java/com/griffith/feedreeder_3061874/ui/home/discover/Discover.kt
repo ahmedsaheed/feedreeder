@@ -52,7 +52,7 @@ import com.griffith.feedreeder_3061874.ui.theme.keyline1
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
- fun Discover(
+fun Discover(
     navigateToReader: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -66,20 +66,29 @@ import com.griffith.feedreeder_3061874.ui.theme.keyline1
     var isURLRssValid by rememberSaveable { mutableStateOf(false) }
 
     fun validate(text: String) {
-            isURLRssValid = viewModel.validateRssUrl(text)
+        isURLRssValid = viewModel.validateRssUrl(text)
+    }
+
+    fun addNewFeed(feedUri: String) = viewModel.addNewFollowedFeed(feedUri)
+
+    fun onDismiss() {
+        showBottomSheet = false
+        val isValid = viewModel.validateRssUrl(addNewFeedText)
+        Log.d("isValid", isValid.toString())
+        if (isValid) {
+            addNewFeed(addNewFeedText)
         }
+        addNewFeedText = ""
+    }
 
 
     val selectedCategory = viewState.selectedCategory
     Log.w("Discover", "Discover: ${viewState.categories} $selectedCategory")
     if (viewState.categories.isNotEmpty() && selectedCategory != null) {
         Column(modifier) {
-            if (showBottomSheet){
+            if (showBottomSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = {
-                        showBottomSheet = false
-                        addNewFeedText = ""
-                                       },
+                    onDismissRequest = { onDismiss() },
                     sheetState = sheetState,
                     containerColor = MaterialTheme.colors.surface,
                 ) {
@@ -98,10 +107,12 @@ import com.griffith.feedreeder_3061874.ui.theme.keyline1
                                 .padding(start = 16.dp, bottom = 15.dp)
                         )
 
-                        Column(modifier = Modifier.align(
-                            Alignment.CenterStart
+                        Column(
+                            modifier = Modifier.align(
+                                Alignment.CenterStart
 
-                        )) {
+                            )
+                        ) {
 
                             TextField(
                                 value = addNewFeedText,
@@ -119,15 +130,12 @@ import com.griffith.feedreeder_3061874.ui.theme.keyline1
                                     imeAction = ImeAction.Done
                                 ),
                                 keyboardActions = KeyboardActions(
-                                    onDone = {
-                                        showBottomSheet = false
-                                        addNewFeedText = ""
-                                    }
+                                    onDone = { onDismiss() }
                                 ),
-                                isError = addNewFeedText.isNotEmpty()  && !isURLRssValid,
+                                isError = addNewFeedText.isNotEmpty() && !isURLRssValid,
 
                                 )
-                            if(addNewFeedText.isNotEmpty() && !isURLRssValid) {
+                            if (addNewFeedText.isNotEmpty() && !isURLRssValid) {
                                 Text(
                                     text = "Invalid RSS URL",
                                     style = MaterialTheme.typography.body2,
@@ -139,13 +147,7 @@ import com.griffith.feedreeder_3061874.ui.theme.keyline1
                         }
 
                         Button(
-                            onClick = {
-                                showBottomSheet = false
-                                val isValid = viewModel.validateRssUrl(addNewFeedText)
-                                Log.d("isValid", isValid.toString())
-                                addNewFeedText = ""
-
-                            },
+                            onClick = { onDismiss() },
                             enabled = isURLRssValid,
                             modifier = Modifier.align(Alignment.BottomEnd)
                         ) {
@@ -177,14 +179,14 @@ import com.griffith.feedreeder_3061874.ui.theme.keyline1
                 Spacer(Modifier.height(8.dp))
 
             }
-                AddFeedFab(
-                    onClick = { showBottomSheet = true },
-                    modifier = Modifier
-                )
-            }
-
+            AddFeedFab(
+                onClick = { showBottomSheet = true },
+                modifier = Modifier
+            )
         }
+
     }
+}
 
 
 private val emptyTabIndicator: @Composable (List<TabPosition>) -> Unit = {}
@@ -244,23 +246,24 @@ private fun ChoiceChipContent(
         )
     }
 }
+
 @Composable
 fun AddFeedFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
-        Box (
-            modifier = Modifier
-                .fillMaxWidth()
-                //give transparent background to the box
-                .background(Color.Transparent)
-        ){
-            FloatingActionButton(
-                modifier = modifier
-                    .padding(16.dp)
-                    .align(alignment = Alignment.BottomEnd),
-                onClick = { onClick() },
-                containerColor = MaterialTheme.colors.primary.copy(alpha = 0.08f),
-                contentColor = MaterialTheme.colors.primaryVariant,
-            ) {
-                Icon(Icons.Filled.Add, "Add Feed")
-            }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            //give transparent background to the box
+            .background(Color.Transparent)
+    ) {
+        FloatingActionButton(
+            modifier = modifier
+                .padding(16.dp)
+                .align(alignment = Alignment.BottomEnd),
+            onClick = { onClick() },
+            containerColor = MaterialTheme.colors.primary.copy(alpha = 0.08f),
+            contentColor = MaterialTheme.colors.primaryVariant,
+        ) {
+            Icon(Icons.Filled.Add, "Add Feed")
         }
+    }
 }

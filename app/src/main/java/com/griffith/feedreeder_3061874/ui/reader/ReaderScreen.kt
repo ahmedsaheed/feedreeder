@@ -370,7 +370,7 @@ private fun TopAppBar(onBackPress: () -> Unit, contentUri: String) {
         IconButton(onClick = {
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, "Hey, check out this article: $contentUri")
+                putExtra(Intent.EXTRA_TEXT, contentUri)
                 type = "text/plain"
             }
 

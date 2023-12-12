@@ -226,7 +226,7 @@ fun EpisodeListItem(
                 modifier = Modifier
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(bounded = false, radius = 24.dp)
+                        indication = rememberRipple(bounded = false, radius = 18.dp)
                     ) { /* TODO */ }
                     .constrainAs(playIcon) {
                         start.linkTo(parent.start, keyline1)

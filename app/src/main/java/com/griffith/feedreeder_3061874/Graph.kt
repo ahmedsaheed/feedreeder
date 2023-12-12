@@ -7,6 +7,7 @@ import com.griffith.feedreeder_3061874.data.EpisodeStore
 import com.griffith.feedreeder_3061874.data.FeedFetcher
 import com.griffith.feedreeder_3061874.data.FeedRepository
 import com.griffith.feedreeder_3061874.data.FeedStore
+import com.griffith.feedreeder_3061874.data.SubscriptionStore
 import com.griffith.feedreeder_3061874.data.room.FeedreederDatabase
 import com.griffith.feedreeder_3061874.data.room.TransactionRunner
 import com.rometools.rome.io.SyndFeedInput
@@ -43,6 +44,12 @@ object Graph {
             okHttpClient = okHttpClient,
             syndFeedInput = syndFeedInput,
             ioDispatcher = ioDispatcher
+        )
+    }
+
+    private val subscriptionStore by lazy {
+        SubscriptionStore(
+            subscriptionDao = db.subscriptionsDao(),
         )
     }
 
