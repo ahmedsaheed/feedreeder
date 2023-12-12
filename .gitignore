@@ -1,3 +1,4 @@
 .gradle/
 !.gradle/libs.version.toml
 .DS_Store
+.idea/
