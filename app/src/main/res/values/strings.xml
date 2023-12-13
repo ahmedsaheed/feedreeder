@@ -10,6 +10,7 @@
 
     <string name="home_library">Your library</string>
     <string name="home_discover">Discover</string>
+    <string name="home_inbox">Your Inbox</string>
 
     <string name="updated_longer">Updated a while ago</string>
     <plurals name="updated_weeks_ago">

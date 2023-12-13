@@ -23,8 +23,11 @@ class FeedStore(
         limit: Int = Int.MAX_VALUE
     ): Flow<List<FeedsExtraInfo>> {
         val res = feedDao.followedFeedsSortedByLastEpisode(limit)
-        Log.w("FeedStore", "followedFeedSortedByLastEpisode: $res")
         return res
+    }
+
+    suspend fun getFollowedFeed(): Flow<List<FeedFollowedEntry>> {
+        return feedFollowedEntryDao.getAllFollowedFeed()
     }
 
     private suspend fun followedFeed(feedUri: String) {

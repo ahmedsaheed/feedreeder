@@ -158,7 +158,9 @@ fun HomeContent(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    if (featuredFeeds.isNotEmpty()) {
+                /*
+
+                    if (!featuredFeeds.isNotEmpty()) {
                         Spacer(Modifier.height(16.dp))
 
                         FollowedFeeds(
@@ -171,8 +173,16 @@ fun HomeContent(
                                 .height(200.dp)
                         )
 
+
+
+
                         Spacer(Modifier.height(16.dp))
                     }
+
+                 */
+
+
+
 
             }
         }
@@ -344,7 +354,7 @@ fun HomeCategoryTabs(
                 text = {
                     Text(
                         text = when (category) {
-                            HomeCategory.Library -> stringResource(R.string.home_library)
+                            HomeCategory.Library -> stringResource(R.string.home_inbox)
                             HomeCategory.Discover -> stringResource(R.string.home_discover)
                         },
                         style = MaterialTheme.typography.body2

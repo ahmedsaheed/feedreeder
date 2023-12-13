@@ -74,9 +74,9 @@ fun Discover(
     fun onDismiss() {
         showBottomSheet = false
         val isValid = viewModel.validateRssUrl(addNewFeedText)
-        Log.d("isValid", isValid.toString())
         if (isValid) {
             addNewFeed(addNewFeedText)
+            viewModel.combineFeedsAndRefresh()
         }
         addNewFeedText = ""
     }

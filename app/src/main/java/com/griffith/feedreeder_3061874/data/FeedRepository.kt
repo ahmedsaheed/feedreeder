@@ -7,7 +7,11 @@ import com.griffith.feedreeder_3061874.data.room.TransactionRunner
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -21,14 +25,13 @@ class FeedRepository(
 ) {
     private var refreshingJob: Job? = null
     private var scope = CoroutineScope(mainDispatcher)
-
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun updateFeeds(force: Boolean) {
+    suspend fun updateFeeds(feedUris :List<String>, force: Boolean) {
         if (refreshingJob?.isActive == true) {
             refreshingJob?.join()
         } else if (force || feedStore.isEmpty()) {
             refreshingJob = scope.launch {
-                feedFetcher(SampleFeeds)
+                feedFetcher(feedUris)
                     .filter { it is FeedRssResponse.Success }
                     .map { it as FeedRssResponse.Success }
                     .collect { (feed, episodes, categories) ->

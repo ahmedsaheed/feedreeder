@@ -1,16 +1,21 @@
 package com.griffith.feedreeder_3061874.ui.home.discover
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.griffith.feedreeder_3061874.Graph
 import com.griffith.feedreeder_3061874.data.Category
 import com.griffith.feedreeder_3061874.data.CategoryStore
+import com.griffith.feedreeder_3061874.data.FeedRepository
 import com.griffith.feedreeder_3061874.data.FeedStore
+import com.griffith.feedreeder_3061874.data.SampleFeeds
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -20,6 +25,7 @@ import java.net.URL
 class DiscoverViewModel(
     private val categoryStore: CategoryStore = Graph.categoryStore,
     private val feedStore: FeedStore = Graph.feedStore,
+    private val feedRepository: FeedRepository = Graph.feedRepository,
 ) : ViewModel() {
     private val _selectedCategory = MutableStateFlow<Category?>(null)
     private val _state = MutableStateFlow(DiscoverViewState())
@@ -32,7 +38,6 @@ class DiscoverViewModel(
             combine(
                 categoryStore.categoriesSortedByFeedCount(limit = 10)
                     .onEach { categories ->
-                        Log.w("DiscoverViewModel", "DiscoverViewModel: categories: $categories")
                         if (categories.isNotEmpty() && _selectedCategory.value == null) {
                             _selectedCategory.value = categories[0]
                         }
@@ -64,6 +69,22 @@ class DiscoverViewModel(
     fun addNewFollowedFeed(feedUri: String) {
         viewModelScope.launch {
             feedStore.toggleFeedFollowed(feedUri)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun combineFeedsAndRefresh(){
+        viewModelScope.launch {
+            combine(
+                feedStore.getFollowedFeed()
+            ) { following ->
+                val allFeed = SampleFeeds.plus(following.toList().flatten().map{
+                    feed -> feed.feedUri
+                })
+                runCatching {
+                    feedRepository.updateFeeds(allFeed, force = true)
+                }
+            }.catch { throwable -> throw throwable }
         }
     }
 
