@@ -66,6 +66,7 @@ import com.griffith.feedreeder_3061874.data.FeedsExtraInfo
 import com.griffith.feedreeder_3061874.ui.components.DynamicThemePrimaryColorsFromImage
 import com.griffith.feedreeder_3061874.ui.components.rememberDominantColorState
 import com.griffith.feedreeder_3061874.ui.home.discover.Discover
+import com.griffith.feedreeder_3061874.ui.home.inbox.Inbox
 import com.griffith.feedreeder_3061874.ui.theme.Feedreeder_3061874Theme
 import com.griffith.feedreeder_3061874.ui.theme.MinContrastOfPrimaryVsSurface
 import com.griffith.feedreeder_3061874.ui.theme.contrastAgainst
@@ -200,7 +201,11 @@ fun HomeContent(
 
         when (selectedHomeCategory) {
             HomeCategory.Library -> {
-                //TODO
+                Inbox(
+                    navigateToReader = navigateToReader, modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
             }
 
             HomeCategory.Discover -> {
