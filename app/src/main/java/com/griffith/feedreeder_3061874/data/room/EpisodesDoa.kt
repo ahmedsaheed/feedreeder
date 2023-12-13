@@ -43,6 +43,18 @@ abstract class EpisodesDoa : BaseDao<Episode> {
         limit: Int
     ): Flow<List<EpisodeToFeed>>
 
+    @Transaction
+    @Query(
+        """
+            SELECT episodes.* FROM episodes
+            INNER JOIN feed_followed_entries ON episodes.episode_uri = feed_followed_entries.feed_uri
+            ORDER BY datetime(published) DESC
+        """
+    )
+    abstract fun episodeFromFollowedFeed(): Flow<List<Episode>>
+
     @Query("SELECT COUNT(*) FROM episodes")
     abstract suspend fun count(): Int
+
+
 }

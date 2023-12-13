@@ -17,6 +17,10 @@ class EpisodeStore(
         return episodeDoa.episodesFromFeedUri(feedUri, limit)
     }
 
+    fun episodesOfFollowedFeed(): Flow<List<Episode>> {
+        return episodeDoa.episodeFromFollowedFeed()
+    }
+
     suspend fun addEpisodes(episode: Collection<Episode>) = episodeDoa.insertAll(episode)
     suspend fun isEmpty(): Boolean = episodeDoa.count() == 0
 
