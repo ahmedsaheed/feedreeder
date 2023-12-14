@@ -4,6 +4,7 @@ import androidx.annotation.FloatRange
 import androidx.annotation.PluralsRes
 import androidx.compose.material.Colors
 import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -52,6 +53,15 @@ val Pink40 = Color(0xFF7D5260)
 val Yellow800 = Color(0xFFF29F05)
 val Red300 = Color(0xFFEA6D7E)
 val FeedreederColors = darkColors(
+    primary = Yellow800,
+    onPrimary = Color.Black,
+    primaryVariant = Yellow800,
+    onSecondary = Color.Black,
+    error = Red300,
+    onError = Color.Black
+)
+
+val FeedReederLightColors = lightColors(
     primary = Yellow800,
     onPrimary = Color.Black,
     primaryVariant = Yellow800,

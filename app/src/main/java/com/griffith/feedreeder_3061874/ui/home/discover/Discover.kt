@@ -66,7 +66,6 @@ fun Discover(
     var addNewFeedText by remember { mutableStateOf("") }
     var isURLRssValid by rememberSaveable { mutableStateOf(false) }
     val inboxModel: InboxViewModel = viewModel()
-    val inboxViewState by inboxModel.state.collectAsStateWithLifecycle()
     fun validate(text: String) {
         isURLRssValid = viewModel.validateRssUrl(text)
     }
@@ -90,7 +89,7 @@ fun Discover(
     val selectedCategory = viewState.selectedCategory
     Log.w("Discover", "Discover: ${viewState.categories} $selectedCategory")
     if (viewState.categories.isNotEmpty() && selectedCategory != null) {
-        Column(modifier) {
+        Column(modifier.background(MaterialTheme.colors.surface)) {
             if (showBottomSheet) {
                 ModalBottomSheet(
                     onDismissRequest = { onDismiss() },
@@ -168,18 +167,21 @@ fun Discover(
                 selectedCategory = selectedCategory,
                 onCategorySelected = viewModel::onCategorySelected,
                 modifier = Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colors.surface)
             )
             Crossfade(
                 targetState = selectedCategory,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f), label = ""
+                    .weight(1f)
+                    .background(MaterialTheme.colors.surface), label = ""
             ) { category ->
 
                 FeedCategory(
                     categoryId = category.id,
                     navigateToReader = navigateToReader,
                     modifier = Modifier.fillMaxSize()
+                        .background(MaterialTheme.colors.surface)
                 )
                 Spacer(Modifier.height(8.dp))
 
@@ -209,12 +211,13 @@ private fun FeedCategoryTabs(
         divider = {}, /* Disable the built-in divider */
         edgePadding = keyline1,
         indicator = emptyTabIndicator,
-        modifier = modifier
+        backgroundColor = MaterialTheme.colors.surface
     ) {
         categories.forEachIndexed { index, category ->
             Tab(
                 selected = index == selectedIndex,
-                onClick = { onCategorySelected(category) }
+                onClick = { onCategorySelected(category) },
+                modifier = Modifier.background(MaterialTheme.colors.surface)
             ) {
                 ChoiceChipContent(
                     text = category.name,

@@ -54,7 +54,7 @@ fun Feedreeder_3061874Theme(
 //    }
 
     MaterialTheme(
-        colors = FeedreederColors,
+        colors = if (darkTheme) FeedreederColors else FeedReederLightColors,
         typography = FeedreederTypography,
         shapes = FeedreederShapes,
         content = content

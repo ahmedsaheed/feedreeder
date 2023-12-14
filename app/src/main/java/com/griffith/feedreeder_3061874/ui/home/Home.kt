@@ -45,11 +45,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -113,6 +119,15 @@ fun HomeContent(
     navigateToReader: (String) -> Unit,
     modifier: Modifier
 ) {
+    var showSettingsBottomSheet by remember { mutableStateOf(false) }
+
+    fun onSettingsClick() {
+        showSettingsBottomSheet = true
+    }
+    fun onDismiss() {
+        showSettingsBottomSheet = false
+    }
+
     Column(
         modifier = modifier.windowInsetsPadding(
             WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)
@@ -149,6 +164,15 @@ fun HomeContent(
                         endYPercentage = 0f
                     )
             ) {
+                if (showSettingsBottomSheet) {
+                    settingsBottomSheet(
+                        onDismiss = { onDismiss() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(400.dp)
+                            .padding(16.dp)
+                    )
+                }
                 Spacer(
                     Modifier
                         .background(appBarColor)
@@ -157,6 +181,7 @@ fun HomeContent(
                 )
                     HomeAppBar(
                         backgroundColor = appBarColor,
+                        onSettingClick = { onSettingsClick() },
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -333,6 +358,37 @@ fun HomeCategoryTabIndicator(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun settingsBottomSheet(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+){
+    val sheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss() },
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colors.surface,
+    ){
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp)
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Settings",
+                style = MaterialTheme.typography.h6,
+                        modifier = Modifier
+                        .align(Alignment.TopStart)
+                    .padding(start = 16.dp, bottom = 15.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
 
 @Composable
 fun HomeCategoryTabs(
@@ -351,12 +407,18 @@ fun HomeCategoryTabs(
     TabRow(
         selectedTabIndex = selectedIndex,
         indicator = indicator,
-        modifier = modifier
+        modifier = modifier.background(
+            MaterialTheme.colors.surface
+        )
+
     ) {
         categories.forEachIndexed { index, category ->
             Tab(
                 selected = index == selectedIndex,
                 onClick = { onCategorySelected(category) },
+                modifier = modifier.background(
+                    MaterialTheme.colors.surface),
+
                 text = {
                     Text(
                         text = when (category) {
@@ -374,6 +436,7 @@ fun HomeCategoryTabs(
 @Composable
 fun HomeAppBar(
     backgroundColor: Color,
+    onSettingClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -399,7 +462,7 @@ fun HomeAppBar(
         actions = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 IconButton(
-                    onClick = { /* TODO: Open search */ }
+                    onClick = { onSettingClick() }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
