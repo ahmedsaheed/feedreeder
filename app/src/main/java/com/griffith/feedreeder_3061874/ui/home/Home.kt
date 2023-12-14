@@ -44,6 +44,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -378,16 +379,19 @@ fun HomeAppBar(
     TopAppBar(
         title = {
             Row {
-                Image(
-                    painter = painterResource(R.drawable.ic_logo),
-                    contentDescription = null
-                )
+
                 Icon(
-                    painter = painterResource(R.drawable.ic_text_logo),
+                    painter = painterResource(R.drawable.feedreeder),
                     contentDescription = stringResource(R.string.app_name),
                     modifier = Modifier
-                        .padding(start = 4.dp)
                         .heightIn(max = 24.dp)
+                )
+
+                Image(
+                    painter = painterResource(R.drawable.baseline_rss_feed_24),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(start = 4.dp)
                 )
             }
         },
@@ -398,7 +402,7 @@ fun HomeAppBar(
                     onClick = { /* TODO: Open search */ }
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Search,
+                        imageVector = Icons.Filled.Settings,
                         contentDescription = stringResource(R.string.cd_search)
                     )
                 }

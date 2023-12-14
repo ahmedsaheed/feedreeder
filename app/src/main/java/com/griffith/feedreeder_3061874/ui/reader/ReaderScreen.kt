@@ -229,7 +229,6 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
     }
     val readingPercentage = (scrollState.value.toFloat() / scrollMaxValue) * 100
     updateReadingProgress(ctx, uiState.contentUri, readingPercentage)
-    Log.i("ReaderScreen", "Progress percentage ${readingPercentage.toBigDecimal().setScale(0, RoundingMode.HALF_EVEN)}")
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -268,15 +267,15 @@ fun ReaderForContent(uiState: ReaderUiState, onBackPress: () -> Unit, modifier: 
 
 
 private fun updateReadingProgress(ctx: Context, url: String, progress: Float) {
-    // get the current reading progress
     val localStorage = LocalStorage(ctx)
     val storedProgress = localStorage.getReadingProgress(url)?.toFloatOrNull() ?: 0f
-    // if the current progress is greater than the stored progress, update the stored progress
     if (progress > storedProgress) {
-        // make the progress without decimal places
-
-        val toBeStored = progress.toBigDecimal().setScale(0, RoundingMode.HALF_EVEN).toString()
-        localStorage.setReadingProgress(url, toBeStored)
+        try {
+            val toBeStored = progress.toBigDecimal().setScale(0, RoundingMode.HALF_EVEN).toString()
+            localStorage.setReadingProgress(url, toBeStored)
+        } catch (e: Exception) {
+            Log.e("ReaderScreen", "Error updating reading progress", e)
+        }
     }
 
 

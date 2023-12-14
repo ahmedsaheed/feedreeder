@@ -46,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.griffith.feedreeder_3061874.data.Category
 import com.griffith.feedreeder_3061874.ui.home.category.FeedCategory
+import com.griffith.feedreeder_3061874.ui.home.inbox.InboxViewModel
 import com.griffith.feedreeder_3061874.ui.theme.keyline1
 
 
@@ -64,7 +65,8 @@ fun Discover(
     val sheetState = rememberModalBottomSheetState()
     var addNewFeedText by remember { mutableStateOf("") }
     var isURLRssValid by rememberSaveable { mutableStateOf(false) }
-
+    val inboxModel: InboxViewModel = viewModel()
+    val inboxViewState by inboxModel.state.collectAsStateWithLifecycle()
     fun validate(text: String) {
         isURLRssValid = viewModel.validateRssUrl(text)
     }
@@ -77,6 +79,9 @@ fun Discover(
         if (isValid) {
             addNewFeed(addNewFeedText)
             viewModel.combineFeedsAndRefresh()
+            // refresh inbox feed
+            inboxModel.refresh()
+
         }
         addNewFeedText = ""
     }

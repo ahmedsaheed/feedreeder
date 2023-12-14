@@ -38,7 +38,22 @@ class InboxViewModel (
         }
     }
 
+    fun refresh() {
+        viewModelScope.launch {
+            combine(
+                episodeStore.episodesOfFollowedFeed(),
+            ) {
+                InboxViewState(
+                    inboxEpisodes = it.toList().flatten()
+                )
+            }.collect {
+                _state.value = it
+            }
+        }
+    }
 }
+
+
 
 data class InboxViewState (
     val inboxEpisodes: List<Episode> = emptyList()

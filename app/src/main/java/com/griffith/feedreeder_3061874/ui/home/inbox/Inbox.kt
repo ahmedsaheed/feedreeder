@@ -92,7 +92,7 @@ fun InboxListItem(
     modifier: Modifier
 ) {
 
-    val imageUrl = feedIcon(episode.uri)
+    val imageUrl = feedIcon(episode.episodeUri)
     val ctx = LocalContext.current
     val localStorage = LocalStorage(ctx)
     ConstraintLayout(modifier = modifier.clickable { onClick(episode.uri) }) {
