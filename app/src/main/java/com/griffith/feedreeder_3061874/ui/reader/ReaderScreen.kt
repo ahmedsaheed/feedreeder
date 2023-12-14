@@ -10,6 +10,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -89,14 +90,14 @@ fun HtmlRender(
     html: String,
     textStyle: TextStyle = MaterialTheme.typography.body1,
 ) {
-
+    val dm = isSystemInDarkTheme()
     val ctx = LocalContext.current
     val fontResId = when (textStyle.fontWeight) {
         FontWeight.Medium -> R.font.montserrat_medium
         else -> R.font.montserrat_regular
     }
     val font = ResourcesCompat.getFont(ctx, fontResId)
-
+    val fontColor = if (dm) Color.White.toArgb() else Color.Black.toArgb()
     AndroidView(
         factory = { ctx ->
             val gravity = when (textStyle.textAlign) {
@@ -108,6 +109,7 @@ fun HtmlRender(
                 FontWeight.Medium -> R.font.montserrat_medium
                 else -> R.font.montserrat_regular
             }
+
 
             val view = HtmlTextView(ctx)
             view.blockQuoteBackgroundColor = Color.Transparent.toArgb()
@@ -126,7 +128,7 @@ fun HtmlRender(
                 textSize = textStyle.fontSize.value
                 typeface = ResourcesCompat.getFont(ctx, fontResId)
                 setLineSpacing(5f, 1f)
-                setTextColor(Color.White.toArgb())
+                setTextColor(fontColor)
                 setLinkTextColor(Color.White.toArgb())
                 setGravity(gravity)
             }
