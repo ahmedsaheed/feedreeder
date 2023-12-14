@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (grayShade > 255) grayShade = 255
 
         if (grayShade < 10) {
-            Toast.makeText(this, "It's too dark here! Increasing brightness", Toast.LENGTH_SHORT)
+             Toast.makeText(this, "Adapting brightness to ambient light for optimal viewing", Toast.LENGTH_SHORT)
                 .show()
             val layoutParams = window.attributes
             layoutParams.screenBrightness = 1f
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         if (grayShade > 200) {
-            Toast.makeText(this, "It's too bright here! Decreasing brightness", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Adapting brightness to ambient light for optimal viewing", Toast.LENGTH_SHORT)
                 .show()
             val layoutParams = window.attributes
             layoutParams.screenBrightness = 0.1f
@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) =
-        Toast.makeText(this, "accuracy changed!", Toast.LENGTH_SHORT).show()
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
 
 }
