@@ -378,13 +378,22 @@ fun settingsBottomSheet(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Settings",
-                style = MaterialTheme.typography.h6,
+                text = "Display Settings",
+                style = MaterialTheme.typography.h2,
                         modifier = Modifier
-                        .align(Alignment.TopStart)
-                    .padding(start = 16.dp, bottom = 15.dp)
+                            .align(Alignment.TopStart)
+                            .padding(start = 16.dp, bottom = 15.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
+            Column {
+
+            }
+
+
+
+
+            Spacer(modifier = Modifier.height(16.dp))
+
         }
     }
 }

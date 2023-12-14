@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.griffith.feedreeder_3061874"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.androidx.palette)
     implementation(libs.androidx.activity.compose)
     implementation("org.sufficientlysecure:html-textview:4.0")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.5.4")
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material)

@@ -99,8 +99,8 @@ fun HtmlRender(
                 else -> Gravity.START
             }
             val fontResId = when (textStyle.fontWeight) {
-                FontWeight.Medium -> R.font.montserrat_medium
-                else -> R.font.montserrat_regular
+                FontWeight.Medium -> R.font.nunito_sans
+                else -> R.font.nunito_sans
             }
 
 
