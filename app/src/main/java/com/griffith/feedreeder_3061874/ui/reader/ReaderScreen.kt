@@ -90,14 +90,7 @@ fun HtmlRender(
     html: String,
     textStyle: TextStyle = MaterialTheme.typography.body1,
 ) {
-    val dm = isSystemInDarkTheme()
-    val ctx = LocalContext.current
-    val fontResId = when (textStyle.fontWeight) {
-        FontWeight.Medium -> R.font.montserrat_medium
-        else -> R.font.montserrat_regular
-    }
-    val font = ResourcesCompat.getFont(ctx, fontResId)
-    val fontColor = if (dm) Color.White.toArgb() else Color.Black.toArgb()
+    val fontColor : Int = MaterialTheme.colors.onSurface.toArgb()
     AndroidView(
         factory = { ctx ->
             val gravity = when (textStyle.textAlign) {
